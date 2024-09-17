@@ -1,0 +1,277 @@
+#!/usr/bin/env fish
+
+# This is a modified example configuration file for river.
+#
+# See the river(1), riverctl(1), and rivertile(1) man pages for complete
+# documentation.
+
+# Set background and border color, do this first to reduce time when blue is shown
+riverctl background-color 0x232323
+riverctl border-color-focused 0x$fish_color_param
+riverctl border-color-unfocused 0x$fish_color_autosuggestion
+
+set k_left M
+set k_down N
+set k_up E
+set k_right I
+
+set directions left down up right
+
+function key --description "dynamically access the k_direction variable" --a direction
+    set var_name k_$direction
+    echo $$var_name
+end
+
+set layout rivercarro
+
+set shift_scale 100
+
+riverctl map normal Super T spawn foot
+
+riverctl map normal Super R spawn fuzzel
+
+riverctl map normal Super B spawn google-chrome-stable
+
+riverctl map normal Super C spawn 'fish -c "fuzzel --select=\$(current_toplevel)"'
+
+riverctl map normal Super Backspace close
+
+riverctl map normal Super+Shift Q exit
+
+for direction in $directions
+    riverctl map normal Super (key $direction) focus-view $direction
+end
+
+for direction in $directions
+    riverctl map normal Super+Shift (key $direction) swap $direction
+end
+
+# Super+Period and Super+Comma to focus the next/previous output
+# riverctl map normal Super Period focus-output next
+# riverctl map normal Super Comma focus-output previous
+
+# Super+Shift+{Period,Comma} to send the focused view to the next/previous output
+# riverctl map normal Super+Shift Period send-to-output next
+# riverctl map normal Super+Shift Comma send-to-output previous
+
+# Super+Return to bump the focused view to the top of the layout stack
+riverctl map normal Super Return zoom
+
+# Super+, and Super+. to decrease/increase the main ratio of rivertile(1)
+riverctl map -repeat normal Super Comma   send-layout-cmd $layout "main-ratio -0.05"
+riverctl map -repeat normal Super Period  send-layout-cmd $layout "main-ratio +0.05"
+
+# Super+Shift+[ and Super+Shift+] to increment/decrement the main count of rivertile(1)
+riverctl map normal Super bracketleft  send-layout-cmd $layout "main-count -1"
+riverctl map normal Super bracketright send-layout-cmd $layout "main-count +1"
+
+# Super+Ctrl+Shift+{M N E I} to move views
+for direction in $directions
+    riverctl map normal Super+Control+Shift (key $direction) move $direction $shift_scale
+end
+
+# Super+Alt+Shift+{H,J,K,L} to resize views
+riverctl map -repeat normal Super+Alt+Shift $k_left  resize horizontal "-$shift_scale"
+riverctl map -repeat normal Super+Alt+Shift $k_down  resize vertical   "+$shift_scale"
+riverctl map -repeat normal Super+Alt+Shift $k_up    resize vertical   "-$shift_scale"
+riverctl map -repeat normal Super+Alt+Shift $k_right resize horizontal "+$shift_scale"
+
+# Super + Left Mouse Button to move views
+riverctl map-pointer normal Super BTN_LEFT move-view
+
+# Super + Right Mouse Button to resize views
+riverctl map-pointer normal Super BTN_RIGHT resize-view
+
+# Super + Middle Mouse Button to toggle float
+riverctl map-pointer normal Super BTN_MIDDLE toggle-float
+
+function bitfield --description "convert a list of numbers into a bitfield"
+    set out 0
+    for n in $argv
+        # use bitor instead of + in case of repeats
+        set out (math "bitor($out, 2 ^ ($n - 1))")
+    end
+    echo $out
+end
+
+# keys are based on canary ortho layout left hand rolls
+#
+#     v=Rise
+# W L Y P B
+# C R S T G
+# Q J V D K
+#       ^=Fall
+#
+# each input is rise + fall to select a number
+# theory is that muscle memory will tie to the rolls
+set rises Y S V
+set falls P T D
+
+# list of all the different rise modes
+set rise_modes (for i in (seq 1 (count $rises)); echo rise_$rises[$i]; end)
+
+# we need the index for math so we can't just iterate
+for rise_i in (seq 1 (count $rises))
+    # the rise key we are binding against
+    set rise $rises[$rise_i]
+    # the mode it should put river in
+    set mode rise_$rise
+    riverctl declare-mode $mode
+    
+    # no matter which of the valid mods are held, enter the correct rise
+    for mod in Super Super+Alt Super+Control Super+Shift
+        # switch rise mode even if already in a rise mode
+        for from_mode in normal $rise_modes
+            riverctl map $from_mode $mod $rise enter-mode $mode
+        end
+    end
+
+    for fall_i in (seq 1 (count $falls))
+        set fall $falls[$fall_i]
+        # indexing! rise selects the range, fall selects the offset
+        set index (math "($rise_i - 1) * 3 + $fall_i")
+        set tag (bitfield $index)
+        # utility to always go back to normal after cmd
+        function when -a mods cmd
+            riverctl map $mode $mods $fall spawn \
+                "$cmd && riverctl enter-mode normal"
+            # allow number keys as a fallback
+            riverctl map normal $mods $index spawn "$cmd"
+        end
+        
+        # default behavior is to focus a tag
+        when Super          "riverctl set-focused-tags $tag"
+        # alt behavior is to toggle visibility of tag
+        when Super+Alt      "riverctl toggle-focused-tags $tag"
+        # shift behavior sets the tag for the given view
+        when Super+Shift    "riverctl set-view-tags $tag"
+        # control behavior toggles the tag for the given view
+        when Super+Control  "riverctl toggle-focused-tags $tag"
+    end
+end
+
+# for i in (seq 1 9)
+#     set tags (1 << ($i - 1))
+# 
+#     # Super+[1-9] to focus tag [0-8]
+#     riverctl map normal Super $i set-focused-tags $tags
+# 
+#     # Super+Shift+[1-9] to tag focused view with tag [0-8]
+#     riverctl map normal Super+Shift $i set-view-tags $tags
+# 
+#     # Super+Control+[1-9] to toggle focus of tag [0-8]
+#     riverctl map normal Super+Control $i toggle-focused-tags $tags
+# 
+#     # Super+Shift+Control+[1-9] to toggle tag [0-8] of focused view
+#     riverctl map normal Super+Shift+Control $i toggle-view-tags $tags
+# end
+
+# Super+0 to focus all tags
+# Super+Shift+0 to tag focused view with all tags
+# set all_tags $(((1 << 32) - 1))
+# riverctl map normal Super 0 set-focused-tags $all_tags
+# riverctl map normal Super+Shift 0 set-view-tags $all_tags
+
+# Super+Space to toggle float
+riverctl map normal Super Space toggle-float
+
+# Super+F to toggle fullscreen
+riverctl map normal Super F toggle-fullscreen
+
+# Super+Alt+{Up,Right,Down,Left} to change layout orientation
+riverctl map normal Super+Alt Up    send-layout-cmd $layout "main-location top"
+riverctl map normal Super+Alt Right send-layout-cmd $layout "main-location right"
+riverctl map normal Super+Alt Down  send-layout-cmd $layout "main-location bottom"
+riverctl map normal Super+Alt Left  send-layout-cmd $layout "main-location left"
+
+# Declare a passthrough mode. This mode has only a single mapping to return to
+# normal mode. This makes it useful for testing a nested wayland compositor
+riverctl declare-mode passthrough
+
+# Super+F11 to enter passthrough mode
+riverctl map normal Super F11 enter-mode passthrough
+
+# Super+F11 to return to normal mode
+riverctl map passthrough Super F11 enter-mode normal
+
+# Various media key mapping examples for both normal and locked mode
+for mode in normal locked
+    riverctl map -repeat $mode None  XF86AudioRaiseVolume  spawn "fish -c 'set_volume \"5%+\"'"
+    riverctl map -repeat $mode Super Up                    spawn "fish -c 'set_volume \"5%+\"'"
+    riverctl map -repeat $mode None  XF86AudioLowerVolume  spawn "fish -c 'set_volume \"5%-\"'"
+    riverctl map -repeat $mode Super Down                  spawn "fish -c 'set_volume \"5%-\"'"
+    riverctl map $mode None  XF86AudioMute spawn 'fish -c toggle_mute'
+    riverctl map $mode Super Slash         spawn 'fish -c toggle_mute'
+
+    # Control MPRIS aware media players with playerctl (https://github.com/altdesktop/playerctl)
+    riverctl map $mode None XF86AudioMedia spawn 'playerctl play-pause'
+    riverctl map $mode None XF86AudioPlay  spawn 'playerctl play-pause'
+    riverctl map $mode Super Space         spawn 'playerctl play-pause'
+
+    riverctl map $mode Super Left           spawn 'playerctl previous'
+    riverctl map $mode None  XF86AudioPrev  spawn 'playerctl previous'
+    riverctl map $mode Super Right          spawn 'playerctl previous'
+    riverctl map $mode None  XF86AudioNext  spawn 'playerctl next'
+
+    riverctl map -repeat $mode None XF86MonBrightnessUp    spawn "fish -c 'set_brightness \"+15\"'"
+    riverctl map -repeat $mode Super+Control Up            spawn "fish -c 'set_brightness \"+15\"'"
+    riverctl map -repeat $mode None XF86MonBrightnessDown  spawn "fish -c 'set_brightness \"-15\"'"
+    riverctl map -repeat $mode Super+Control Down          spawn "fish -c 'set_brightness \"-15\"'"
+end
+
+# screenshot!
+riverctl map normal Super Home spawn 'fish -c screenshot'
+
+riverctl default-attach-mode below
+
+# Set keyboard repeat rate to kde default, its what im used to
+riverctl set-repeat 25 600
+
+set mice \
+    "pointer-1133-16534-Logitech_ERGO_M575" \
+    "pointer-1133-45095-ERGO_M575_Mouse"
+for mouse in $mice
+    riverctl input $mouse accel-profile adaptive
+    riverctl input $mouse pointer-accel "-.55"
+    riverctl input $mouse scroll-method button
+    riverctl input $mouse scroll-button "BTN_SIDE"
+    riverctl input $mouse scroll-factor ".45"
+end
+
+set trackpad "pointer-1739-52643-1A582014:00_06CB:CDA3_Touchpad"
+riverctl input $trackpad tap enabled
+riverctl input $trackpad natural-scroll enabled
+riverctl input $trackpad accel-profile adaptive
+riverctl input $trackpad scroll-factor ".25"
+riverctl input $trackpad disable-while-typing enabled
+
+# Make all views with an app-id that starts with "float" and title "foo" start floating.
+riverctl rule-add -app-id 'float*' -title 'foo' float
+
+# Make all views with app-id "bar" and any title use client-side decorations
+riverctl rule-add -app-id "bar" csd
+
+# default tags!
+riverctl rule-add -app-id vesktop tags (bitfield 9)
+riverctl rule-add -title "Spotify Premium" tags (bitfield 8)
+
+# Set the default layout generator to be $layout and start it.
+# River will send the process group of the init executable SIGTERM on exit.
+riverctl default-layout $layout
+$layout -outer-gaps 0 &
+
+# launch way displays
+way-displays > /tmp/way-displays.{$XDG_VTNR}.{$USER}.log 2>&1 &
+
+# launch wob
+killall wob
+rm /tmp/wob
+mkfifo /tmp/wob
+tail -f /tmp/wob | wob &
+
+riverctl spawn "$HOME/.config/river/status"
+riverctl spawn "$HOME/.config/river/bar"
+riverctl spawn "$HOME/.config/river/player_watcher"
+
+killall swayidle
+riverctl spawn "swayidle -w -C /etc/swayidle/config"

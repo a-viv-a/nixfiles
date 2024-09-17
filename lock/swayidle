@@ -1,0 +1,2 @@
+timeout 300 'swaylock -f -C /etc/swaylock/config'
+before-sleep 'playerctl pause; swaylock -f -C /etc/swaylock/config'

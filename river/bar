@@ -1,0 +1,24 @@
+#!/usr/bin/env fish
+
+set FIFO "$XDG_RUNTIME_DIR/sandbar"
+
+# the more elegant approach is flawed so lets go nuclear
+killall sandbar
+
+# if test -e "$FIFO"
+#     rm -f "$FIFO"
+# end
+# mkfifo "$FIFO"
+
+while cat $FIFO; end | sandbar \
+    -bottom \
+    -active-fg-color "#232323" \
+	-active-bg-color "#$fish_color_command" \
+	# -inactive-fg-color "#ebdbb2" \
+	-inactive-bg-color "#232323" \
+	-urgent-fg-color "#232323" \
+	-urgent-bg-color "#$fish_color_comment" \
+	# -title-fg-color "#000000" \
+	-title-bg-color "#232323" \
+    -font "Iosevka Nerd Font:Pixelsize" \
+    -no-title

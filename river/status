@@ -1,0 +1,216 @@
+#!/usr/bin/env fish
+
+# math, rounded and padded to 1 sig fig to reduce shift
+function padmath -a compute
+    printf "%.1f" (math --scale 1 $compute)
+end
+
+set wifi_out ""
+set wifi_period 120
+function wifi_fn
+    set wifi_out "^fg($fish_color_redirection)[$(nmcli -f IN-USE,SSID,RATE,SIGNAL dev wifi | awk '/\*/ {$1=""; print $0 }' | string trim)%]"
+end
+
+set audio_out ""
+set audio_period 240
+function audio_fn
+    set default_sink (wpctl get-volume @DEFAULT_AUDIO_SINK@)
+    set volume (echo $default_sink | rg -o ': ((?:\\d|\\.)+)' -r '$1')
+    set volume (math "$volume * 100")
+    set icon 
+    set color "$fish_color_command"
+    if echo $default_sink | rg MUTED >/dev/null
+        set icon 
+        set color "$fish_color_error"
+    end
+    set audio_out "^fg($color)[$icon  $volume%]"
+end
+
+set player_out ""
+set player_period 240
+function player_fn
+    set player_out \
+        (playerctl --no-messages metadata --format \
+     "^fg($fish_color_comment){{ title }} by {{ artist }}")
+end
+
+set weather_out ""
+set weather_period 1800 # 30 minutes
+function weather_fn
+    echo curling weather
+    set resp \
+        (curl 'https://wttr.in?format=%t,%20feels%20%f%20%c')
+    set weather_out "^fg(#ebdbb2)[$(string trim $resp)]"
+end
+
+set cpu_out ""
+set cpu_period 15
+function cpu_fn
+    set cpu_out "^fg($fish_color_command)  $(grep -o "^[^ ]*" /proc/loadavg)"
+end
+
+set memory_out ""
+set memory_period 15
+function memory_fn
+    set memory_out "^fg($fish_color_quote)  $(free -h | sed -n "2s/\([^ ]* *\)\{2\}\([^ ]*\).*/\2/p")"
+end
+
+set brightness_out ""
+set brightness_period 240
+set backlight /sys/class/backlight/amdgpu_bl2/
+function brightness_fn
+    set val (math --scale 1 "($(cat $backlight/brightness) / $(cat $backlight/max_brightness)) * 100")
+    set brightness_out "^fg($fish_color_comment) $val%"
+end
+
+# ---- power section ----
+set battery_path /sys/class/power_supply/BAT0
+
+# computed with n+1
+set max_samples 9
+set current_samples (bat $battery_path/current_now)
+
+function list_sum
+    set total 0
+    for val in $argv
+        set total (math "$total + $val")
+    end
+    echo $total
+end
+
+# sample the cumulative average of the current
+function average_current
+    set --append current_samples (bat $battery_path/current_now)
+    set average (math "$(list_sum $current_samples) / $(count $current_samples)")
+
+    while test (count $current_samples) -gt $max_samples
+        set --erase current_samples[1]
+    end
+
+    echo $average
+end
+
+set power_out ""
+set power_period 15
+set battery_icons 󰂃 󰁺 󰁻 󰁼 󰁽 󰁾 󰁿 󰂀 󰂁 󰂂 󰁹
+function power_fn
+    set power_percent (cat $battery_path/capacity)
+    set battery_icon $battery_icons[(math --scale 0 "$power_percent / 10 + 1")]
+    set power_status (cat /sys/class/power_supply/BAT0/status)
+    set detail " "
+    if test "$power_status" = Discharging
+        set discharge_watts (padmath \
+            "$(cat $battery_path/current_now) * $(cat $battery_path/voltage_now) * 1e-12")
+        set time_remaining (date -u -d @(math "($(bat $battery_path/charge_now) / $(average_current)) * 60 * 60") +"%-H:%M")
+        set detail " $discharge_watts""w $time_remaining "
+    end
+    if test "$power_status" = Charging
+        set detail "  "
+    end
+    set power_out "^fg($fish_color_comment)[$battery_icon""$detail""$power_percent%]"
+end
+# ---- end power section ----
+
+set datetime_out ""
+set datetime_period 60
+function datetime_fn
+    echo "update date"
+    set datetime_out "^fg(ffffff)$(date "+%a %d %b %I:%M %P")"
+end
+
+set names wifi audio player cpu memory brightness power datetime weather
+
+function write_display
+    echo "all status $player_out $weather_out $audio_out $wifi_out $brightness_out $memory_out $cpu_out $power_out $datetime_out" >$FIFO
+end
+
+set status_pid_dir "$XDG_RUNTIME_DIR/status_pid"
+
+# remove the old one!
+if test -e $status_pid_dir
+    kill (cat $status_pid_dir)
+end
+
+printf "%s" "$fish_pid" >$status_pid_dir
+
+set FIFO "$XDG_RUNTIME_DIR/sandbar"
+
+if test ! -e "$FIFO"
+    mkfifo "$FIFO"
+end
+
+set needs_refresh_dir "$XDG_RUNTIME_DIR/status_needs_refresh"
+
+if test -e $needs_refresh_dir
+    rm $needs_refresh_dir/*
+    rmdir $needs_refresh_dir
+end
+mkdir $needs_refresh_dir
+
+function update -a name
+    set period {$name}_period
+    if test (math "$sec % $$period") -eq 0
+        {$name}_fn
+    end
+end
+
+set min_period 60
+
+for name in $names
+    set p {$name}_period
+    if test $$p -lt $min_period
+        set min_period $$p
+    end
+end
+echo min period: $min_period
+
+# instead of computing the right initial seconds, let period slip correct
+set sec 0
+
+# set inital values
+begin
+    for name in $names
+        {$name}_fn
+    end
+    write_display
+end
+
+# try to prevent drift
+function compute_sleep_time
+    set current_seconds (date +%S)
+    math "$min_period - ($current_seconds % $min_period)"
+end
+
+function tick
+    echo "tick $sec"
+    for name in $names
+        update $name
+    end
+    write_display
+    # if we have fallen catastrophically out of sync, slip some period(s) to line up
+    set current_seconds (date +%S)
+    set sec (math "$sec + $min_period + (floor (($current_seconds - ($sec % 60)) / $min_period) * $min_period)")
+end
+
+function refresh
+    echo "doing refresh"
+    for refresh in (ls $needs_refresh_dir)
+        echo "refreshing $refresh"
+        {$refresh}_fn
+        rm $needs_refresh_dir/$refresh
+    end
+    write_display
+end
+
+echo entering main loop
+
+while true
+    set awoken true
+    sleep (compute_sleep_time) && set awoken false &
+    wait
+    if $awoken
+        refresh
+    else
+        tick
+    end
+end

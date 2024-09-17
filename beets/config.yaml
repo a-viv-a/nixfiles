@@ -1,0 +1,14 @@
+directory: ~/music
+library: ~/music/library.db
+plugins: chroma fetchart embedart replaygain lastgenre ftintitle
+fetchart:
+    maxwidth: 512
+    deinterlace: yes
+    quality: 65
+    cover_format: JPEG
+    sources: itunes *
+embedart:
+    auto: no
+replaygain:
+    backend: ffmpeg
+    overwrite: yes
