@@ -33,6 +33,7 @@
         # ".local/share/kwalletd"
         # ".local/share/sddm"
         ".local/share/zoxide"
+        ".local/share/direnv/allow"
         # its a tossup but i like my cache sticking around!
         ".cache/"
         "downloads"

@@ -1,0 +1,15 @@
+{
+  "flakes": [
+    {
+      "from": {
+        "id": "aviva",
+        "type": "indirect"
+      },
+      "to": {
+        "path": "/home/aviva/nixos/templates",
+        "type": "path"
+      }
+    }
+  ],
+  "version": 2
+}

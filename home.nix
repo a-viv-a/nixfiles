@@ -189,6 +189,8 @@ in
   # Nicely reload system units when changing configs
   systemd.user.startServices = "sd-switch";
 
+  xdg.configFile."nix/registry.json".source = ./templates/registry.json;
+
   # virt manager
   dconf.settings = {
     "org/virt-manager/virt-manager/connections" = {
