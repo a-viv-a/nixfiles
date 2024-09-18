@@ -8,6 +8,10 @@ DM me on any of my socials. I'm learning nix as I go.
 The history is destroyed prior to this commit because I commited secrets when I
 was getting started. :3
 
+## what does it look like
+
+![image](https://github.com/user-attachments/assets/1029d6ac-b565-4e87-8c53-6140de8871e4)
+
 ---
 
 This was based on an example repo for [this blog
