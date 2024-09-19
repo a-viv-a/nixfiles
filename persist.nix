@@ -34,6 +34,9 @@
         # ".local/share/sddm"
         ".local/share/zoxide"
         ".local/share/direnv/allow"
+        # fish history, just persisting the history file causes issues
+        # https://github.com/fish-shell/fish-shell/issues/10730
+        ".local/share/fish/"
         # its a tossup but i like my cache sticking around!
         ".cache/"
         "downloads"
@@ -53,10 +56,6 @@
         ".config/obsidian/"
       ];
       files = [
-        # ".bash_history"
-        # ".config/systemsettingsrc"
-        ".local/share/fish/fish_history"
-        # ".zsh_history"
         # pem cert for eduroam
         ".config/cat_installer/ca.pem"
       ];
