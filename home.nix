@@ -135,13 +135,6 @@ in
     };
   };
 
-  services = {
-    mako = {
-      enable = true;
-      defaultTimeout = 4000;
-    };
-  };
-
   programs.nix-index = {
     enable = true;
     enableFishIntegration = true;

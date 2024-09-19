@@ -11,6 +11,7 @@
     sandbar
     lswt
     wob
+    mako
     swayimg
     playerctl
     swaylock
