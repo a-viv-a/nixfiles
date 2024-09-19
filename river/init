@@ -47,6 +47,8 @@ riverctl map normal Super Backspace close
 
 riverctl map normal Super+Shift Q exit
 
+riverctl map normal Super Escape spawn 'killall -USR1 swayidle'
+
 for direction in $directions
     riverctl map normal Super (key $direction) focus-view $direction
 end

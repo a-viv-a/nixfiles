@@ -1,2 +1,3 @@
 timeout 300 'swaylock -f -C /etc/swaylock/config'
+timeout 420 'wlopm --off eDP-1' resume 'wlopm --on eDP-1'
 before-sleep 'playerctl pause; swaylock -f -C /etc/swaylock/config'

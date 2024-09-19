@@ -18,6 +18,7 @@
     swayidle
     gnome-keyring
     seahorse
+    wlopm
   ];
   environment.etc."way-displays/cfg.yaml".source = ./way-displays/cfg.yaml;
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
