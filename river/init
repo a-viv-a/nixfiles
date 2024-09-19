@@ -10,10 +10,19 @@ riverctl background-color 0x232323
 riverctl border-color-focused 0x$fish_color_param
 riverctl border-color-unfocused 0x$fish_color_autosuggestion
 
+set -Ux LAYOUT canary
 set k_left M
 set k_down N
 set k_up E
 set k_right I
+
+if contains querty $argv
+    set -Ux LAYOUT querty
+    set k_left H
+    set k_down J
+    set k_up K
+    set k_right L
+end
 
 set directions left down up right
 
