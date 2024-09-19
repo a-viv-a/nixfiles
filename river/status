@@ -35,12 +35,20 @@ function player_fn
 end
 
 set weather_out ""
-set weather_period 1800 # 30 minutes
+set happy_weather_period 1800 # 30 minutes
+set failing_weather_period 120 # 2 minutes
+set weather_period $happy_weather_period
 function weather_fn
     echo curling weather
     set resp \
         (curl 'https://wttr.in?format=%t,%20feels%20%f%20%c')
-    set weather_out "^fg(#ebdbb2)[$(string trim $resp)]"
+    if test $status -eq 0
+        set weather_out "^fg(#ebdbb2)[$(string trim $resp)]"
+        set weather_period $happy_weather_period
+    else
+        echo retrying in $failing_weather_period
+        set weather_period $failing_weather_period
+    end
 end
 
 set cpu_out ""
