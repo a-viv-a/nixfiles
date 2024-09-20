@@ -42,6 +42,7 @@ in
       commandLineArgs = [
         "--enable-features=UseOzonePlatform"
         "--ozone-platform=wayland"
+        "--profile-directory=Default"
       ];
     })
     # https://github.com/Vencord/Vesktop/issues/516
