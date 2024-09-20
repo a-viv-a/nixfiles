@@ -10,6 +10,9 @@ riverctl background-color 0x232323
 riverctl border-color-focused 0x$fish_color_param
 riverctl border-color-unfocused 0x$fish_color_autosuggestion
 
+# we need to pass these variables so screenshare works
+systemctl --user import-environment DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
+
 set -Ux LAYOUT canary
 set k_left M
 set k_down N

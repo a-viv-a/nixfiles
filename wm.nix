@@ -22,7 +22,17 @@
   ];
   environment.etc."way-displays/cfg.yaml".source = ./way-displays/cfg.yaml;
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
+  environment.variables.XDG_CURRENT_DESKTOP = "river";
   environment.etc."wob/wob.ini".source = ./wob/wob.ini;
+
+  xdg.portal = {
+    enable = true;
+    wlr.enable = true;
+    extraPortals = [
+      pkgs.xdg-desktop-portal-gtk
+      pkgs.xdg-desktop-portal-wlr
+    ];
+  };
 
   environment.etc."swayidle/config".source = ./lock/swayidle;
   environment.etc."swaylock/config".source = pkgs.substitute {
