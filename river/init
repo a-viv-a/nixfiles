@@ -210,6 +210,7 @@ riverctl map passthrough Super F11 enter-mode normal
 
 # Various media key mapping examples for both normal and locked mode
 for mode in normal locked
+    # TODO: dedupe this somehow...
     riverctl map -repeat $mode None XF86AudioRaiseVolume spawn "fish -c 'set_volume \"5%+\"'"
     riverctl map -repeat $mode Super Up spawn "fish -c 'set_volume \"5%+\"'"
     riverctl map -repeat $mode None XF86AudioLowerVolume spawn "fish -c 'set_volume \"5%-\"'"
@@ -224,7 +225,7 @@ for mode in normal locked
 
     riverctl map $mode Super Left spawn 'playerctl previous'
     riverctl map $mode None XF86AudioPrev spawn 'playerctl previous'
-    riverctl map $mode Super Right spawn 'playerctl previous'
+    riverctl map $mode Super Right spawn 'playerctl next'
     riverctl map $mode None XF86AudioNext spawn 'playerctl next'
 
     riverctl map -repeat $mode None XF86MonBrightnessUp spawn "fish -c 'set_brightness \"+15\"'"
