@@ -50,8 +50,9 @@ in
   boot.loader.efi.canTouchEfiVariables = true;
 
   # can't have more than one!
-  # time.timeZone = "America/Chicago";
-  services.automatic-timezoned.enable = true;
+  time.timeZone = "America/Chicago";
+  # services.automatic-timezoned.enable = true;
+  # services.geoclue2.geoProviderUrl = "https://beacondb.net/v1/geolocate";
   # time.timeZone = "America/Los_Angeles";
 
   security.rtkit.enable = true;
