@@ -180,6 +180,12 @@ in
   # foot config
   xdg.configFile."foot/foot.ini".source = ./foot/foot.ini;
 
+  # sioyek config
+  xdg.configFile."sioyek" = {
+    source = ./sioyek;
+    recursive = true;
+  };
+
   # Nicely reload system units when changing configs
   systemd.user.startServices = "sd-switch";
 
