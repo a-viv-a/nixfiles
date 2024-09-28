@@ -46,6 +46,8 @@ riverctl map normal Super B spawn google-chrome-stable
 
 riverctl map normal Super C spawn 'fish -c "fuzzel --select=\$(current_toplevel)"'
 
+riverctl map normal Super O spawn 'fish -c "open (float_choose)"'
+
 riverctl map normal Super Backspace close
 
 riverctl map normal Super+Shift Q exit
@@ -261,7 +263,8 @@ riverctl input $trackpad scroll-factor ".25"
 riverctl input $trackpad disable-while-typing enabled
 
 # Make all views with an app-id that starts with "float" and title "foo" start floating.
-riverctl rule-add -app-id 'float*' -title foo float
+# riverctl rule-add -app-id 'float*' -title foo float
+riverctl rule-add -app-id floating_foot -title foot float
 
 # Make all views with app-id "bar" and any title use client-side decorations
 riverctl rule-add -app-id bar csd

@@ -28,7 +28,7 @@ in
     obsidian
     rivercarro
     gparted
-    joshuto
+    yazi
     sioyek
     mosh
     usbutils
@@ -72,7 +72,7 @@ in
       shellAbbrs = {
         cat = "bat";
         s = "sudo";
-        jt = "joshuto";
+        y = "yazi";
         h = "hx";
       };
       # shellAliases = with pkgs; builtins.mapAttrs (name: value: lib.getExe value){
