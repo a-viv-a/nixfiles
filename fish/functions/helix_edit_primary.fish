@@ -6,6 +6,5 @@ function helix_edit_primary
     if test "$initial" != "$(cat $tmp)"
         cat $tmp | wl-copy
         echo put contents of $tmp into clipboard
-        notify-send -t 3000 "buffer written to clipboard"
     end
 end
