@@ -48,6 +48,8 @@ riverctl map normal Super C spawn 'fish -c "fuzzel --select=\$(current_toplevel)
 
 riverctl map normal Super O spawn 'fish -c "open (float_choose)"'
 
+riverctl map normal Super P spawn 'fish -c "floating_fish helix_edit_primary"'
+
 riverctl map normal Super Backspace close
 
 riverctl map normal Super+Shift Q exit
