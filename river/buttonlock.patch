@@ -1,0 +1,118 @@
+diff --git a/README.md b/README.md
+index f8eb56e..f156566 100644
+--- a/README.md
++++ b/README.md
+@@ -7,7 +7,7 @@
+ River is a dynamic tiling Wayland compositor with flexible runtime
+ configuration.
+ 
+-Check [packaging status](https://repology.org/project/river/versions) —
++Check [packaging status](https://repology.org/project/river-compositor/versions) —
+ Join us at [#river](https://web.libera.chat/?channels=#river) on irc.libera.chat —
+ Read our man pages, [wiki](https://codeberg.org/river/wiki), and
+ [Code of Conduct](CODE_OF_CONDUCT.md)
+diff --git a/completions/bash/riverctl b/completions/bash/riverctl
+index 68684d5..a889d4c 100644
+--- a/completions/bash/riverctl
++++ b/completions/bash/riverctl
+@@ -99,6 +99,7 @@ function __riverctl_completion ()
+ 				tap-button-map \
+ 				scroll-method \
+ 				scroll-button \
++				scroll-button-lock \
+ 				map-to-output"
+ 			COMPREPLY=($(compgen -W "${OPTS}" -- "${COMP_WORDS[3]}"))
+ 		elif [ "${COMP_WORDS[1]}" == "hide-cursor" ]
+@@ -117,7 +118,7 @@ function __riverctl_completion ()
+ 				"events") OPTS="enabled disabled disabled-on-external-mouse" ;;
+ 				"accel-profile") OPTS="none flat adaptive" ;;
+ 				"click-method") OPTS="none button-areas clickfinger" ;;
+-				"drag"|"drag-lock"|"disable-while-typing"|"middle-emulation"|"left-handed"|"tap") OPTS="enabled disabled" ;;
++				"drag"|"drag-lock"|"disable-while-typing"|"middle-emulation"|"left-handed"|"tap"|"scroll-button-lock") OPTS="enabled disabled" ;;
+ 				"tap-button-map") OPTS="left-right-middle left-middle-right" ;;
+ 				"scroll-method") OPTS="none two-finger edge button" ;;
+ 				*) return ;;
+diff --git a/completions/fish/riverctl.fish b/completions/fish/riverctl.fish
+index 65fad0a..38f596a 100644
+--- a/completions/fish/riverctl.fish
++++ b/completions/fish/riverctl.fish
+@@ -119,10 +119,11 @@ complete -c riverctl -n '__fish_seen_subcommand_from input; and __fish_riverctl_
+ complete -c riverctl -n '__fish_seen_subcommand_from input; and __fish_riverctl_complete_arg 3' -a 'tap-button-map'       -d 'Configure the button mapping for tapping'
+ complete -c riverctl -n '__fish_seen_subcommand_from input; and __fish_riverctl_complete_arg 3' -a 'scroll-method'        -d 'Set the scroll method'
+ complete -c riverctl -n '__fish_seen_subcommand_from input; and __fish_riverctl_complete_arg 3' -a 'scroll-button'        -d 'Set the scroll button'
++complete -c riverctl -n '__fish_seen_subcommand_from input; and __fish_riverctl_complete_arg 3' -a 'scroll-button-lock'   -d 'Enable or disable the scroll button locked functionality'
+ complete -c riverctl -n '__fish_seen_subcommand_from input; and __fish_riverctl_complete_arg 3' -a 'map-to-output'        -d 'Map to a given output'
+ 
+ # Subcommands for the subcommands of 'input'
+-complete -c riverctl -n '__fish_seen_subcommand_from input; and __fish_riverctl_complete_arg 4; and __fish_seen_subcommand_from drag drag-lock disable-while-typing disable-while-trackpointing middle-emulation natural-scroll left-handed tap' -a 'enabled disabled'
++complete -c riverctl -n '__fish_seen_subcommand_from input; and __fish_riverctl_complete_arg 4; and __fish_seen_subcommand_from drag drag-lock disable-while-typing disable-while-trackpointing middle-emulation natural-scroll left-handed tap scroll-button-lock' -a 'enabled disabled'
+ complete -c riverctl -n '__fish_seen_subcommand_from input; and __fish_riverctl_complete_arg 4; and __fish_seen_subcommand_from events'         -a 'enabled disabled disabled-on-external-mouse'
+ complete -c riverctl -n '__fish_seen_subcommand_from input; and __fish_riverctl_complete_arg 4; and __fish_seen_subcommand_from accel-profile'  -a 'none flat adaptive'
+ complete -c riverctl -n '__fish_seen_subcommand_from input; and __fish_riverctl_complete_arg 4; and __fish_seen_subcommand_from click-method'   -a 'none button-areas clickfinger'
+diff --git a/completions/zsh/_riverctl b/completions/zsh/_riverctl
+index 73df6b1..96c1500 100644
+--- a/completions/zsh/_riverctl
++++ b/completions/zsh/_riverctl
+@@ -126,6 +126,7 @@ _riverctl()
+                                 'tap-button-map:Configure the button mapping for tapping'
+                                 'scroll-method:Set the scroll method'
+                                 'scroll-button:Set the scroll button'
++                                'scroll-button-lock:Enabled or disable the scroll button lock functionality'
+                                 'map-to-output:Map to a given output'
+                             )
+ 
+@@ -144,6 +145,7 @@ _riverctl()
+                                 natural-scroll) _alternative 'input-cmds:args:(enabled disabled)' ;;
+                                 left-handed) _alternative 'input-cmds:args:(enabled disabled)' ;;
+                                 tap) _alternative 'input-cmds:args:(enabled disabled)' ;;
++                                scroll-button-lock) _alternative 'input-cmds:args:(enabled disabled)' ;;
+                                 tap-button-map) _alternative 'input-cmds:args:(left-right-middle left-middle-right)' ;;
+                                 scroll-method) _alternative 'input-cmds:args:(none two-finger edge button)' ;;
+                                 *) return 0 ;;
+diff --git a/doc/riverctl.1.scd b/doc/riverctl.1.scd
+index b729f22..0741294 100644
+--- a/doc/riverctl.1.scd
++++ b/doc/riverctl.1.scd
+@@ -545,6 +545,11 @@ However note that not every input device supports every property.
+ 	Set the scroll button of an input device. _button_ is the name of a Linux
+ 	input event code.
+ 
++*input* _name_ *scroll-button-lock* *enabled*|*disabled*
++	Enable or disable the tap functionality of the input device. If active, the
++	button does not need to be held down. One press makes the button considered to
++	be held down, and a second press releases the button.
++
+ *input* _name_ *map-to-output* _output_|*disabled*
+ 	Maps the input to a given output. This is valid even if the output isn't
+ 	currently active and will lead to the device being mapped once it is
+diff --git a/river/InputConfig.zig b/river/InputConfig.zig
+index 39fc47d..98eaa8f 100644
+--- a/river/InputConfig.zig
++++ b/river/InputConfig.zig
+@@ -215,6 +215,18 @@ pub const ScrollButton = struct {
+     }
+ };
+ 
++pub const ScrollButtonLock = enum {
++    enabled,
++    disabled,
++
++    fn apply(scroll_button_lock: ScrollButtonLock, device: *c.libinput_device) void {
++        _ = c.libinput_device_config_scroll_set_button_lock(device, if (scroll_button_lock == .enabled)
++            c.LIBINPUT_CONFIG_SCROLL_BUTTON_LOCK_ENABLED
++        else
++            c.LIBINPUT_CONFIG_SCROLL_BUTTON_LOCK_DISABLED);
++    }
++};
++
+ pub const MapToOutput = struct {
+     output_name: ?[]const u8,
+ 
+@@ -279,6 +291,7 @@ tap: ?TapState = null,
+ @"pointer-accel": ?PointerAccel = null,
+ @"scroll-method": ?ScrollMethod = null,
+ @"scroll-button": ?ScrollButton = null,
++@"scroll-button-lock": ?ScrollButtonLock = null,
+ @"map-to-output": ?MapToOutput = null,
+ 
+ pub fn deinit(config: *InputConfig) void {

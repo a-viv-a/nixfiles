@@ -1,7 +1,10 @@
 { pkgs, lib, ... }:
 {
   programs.river.enable = true;
-  environment.systemPackages = with pkgs; [
+  programs.river.package = pkgs.river.overrideAttrs (attrs: {
+    patches = attrs.patches or [ ] ++ [ ./river/buttonlock.patch ];
+  });
+  programs.river.extraPackages = with pkgs; [
     way-displays
     wl-clipboard
     grim
