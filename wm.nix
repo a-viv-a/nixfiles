@@ -1,9 +1,18 @@
 { pkgs, lib, ... }:
 {
   programs.river.enable = true;
-  programs.river.package = pkgs.river.overrideAttrs (attrs: {
-    patches = attrs.patches or [ ] ++ [ ./river/buttonlock.patch ];
-  });
+  nixpkgs.overlays = [
+    (final: prev: {
+      river = prev.river.overrideAttrs (old: {
+        patches = (old.patches or [ ]) ++ [
+          (prev.fetchpatch {
+            url = "https://codeberg.org/river/river/pulls/1145.diff";
+            hash = "sha256-LrYn1lU+CTkXXuqnplZFS+aLmwupnPyerRBgUya9iMM=";
+          })
+        ];
+      });
+    })
+  ];
   programs.river.extraPackages = with pkgs; [
     way-displays
     wl-clipboard
