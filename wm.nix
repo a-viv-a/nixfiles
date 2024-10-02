@@ -7,7 +7,7 @@
         patches = (old.patches or [ ]) ++ [
           (prev.fetchpatch {
             url = "https://codeberg.org/river/river/pulls/1145.diff";
-            hash = "sha256-LrYn1lU+CTkXXuqnplZFS+aLmwupnPyerRBgUya9iMM=";
+            hash = "sha256-ZCDgVmv3ZRdRfhFDovf2Yw92OeH/hfo1yohR1h/ahhA=";
           })
         ];
       });

@@ -255,7 +255,8 @@ for mouse in $mice
     riverctl input $mouse pointer-accel "-.55"
     riverctl input $mouse scroll-method button
     riverctl input $mouse scroll-button BTN_SIDE
-    riverctl input $mouse scroll-factor ".45"
+    riverctl input $mouse scroll-button-lock enabled
+    riverctl input $mouse scroll-factor ".4"
 end
 
 set trackpad "pointer-1739-52643-1A582014:00_06CB:CDA3_Touchpad"
