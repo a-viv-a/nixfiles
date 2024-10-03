@@ -35,6 +35,9 @@
   environment.etc."way-displays/cfg.yaml".source = ./way-displays/cfg.yaml;
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
   environment.variables.XDG_CURRENT_DESKTOP = "river";
+  # bind caps -> escape key for internal keyboard
+  # my external keyboard doesn't use caps lock (shift keys in a mode)
+  environment.variables.XKB_DEFAULT_OPTIONS = "caps:escape";
   environment.etc."wob/wob.ini".source = ./wob/wob.ini;
 
   xdg.portal = {
