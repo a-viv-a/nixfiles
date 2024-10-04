@@ -23,4 +23,4 @@ end | sandbar \
     -title-bg-color "#232323" \
     -font "Iosevka Nerd Font:Pixelsize" \
     -no-title \
-    -tags 10 (seq 1 9) scratch
+    -tags 11 (seq 1 9) sl sp

@@ -42,13 +42,13 @@ riverctl map normal Super T spawn foot
 
 riverctl map normal Super R spawn fuzzel
 
-riverctl map normal Super B spawn google-chrome-stable
+# riverctl map normal Super B spawn google-chrome-stable
 
 riverctl map normal Super C spawn 'fish -c "fuzzel --select=\$(current_toplevel)"'
 
 riverctl map normal Super O spawn 'fish -c "open (float_choose)"'
 
-riverctl map normal Super P spawn 'fish -c "floating_fish helix_edit_primary"'
+riverctl map normal Super W spawn 'fish -c "floating_fish helix_edit_primary"'
 
 riverctl map normal Super Backspace close
 
@@ -103,14 +103,21 @@ riverctl map-pointer normal Super BTN_RIGHT resize-view
 # Super + Middle Mouse Button to toggle float
 riverctl map-pointer normal Super BTN_MIDDLE toggle-float
 
-function bitfield --description "convert a list of numbers into a bitfield"
-    set out 0
-    for n in $argv
-        # use bitor instead of + in case of repeats
-        set out (math "bitor($out, 2 ^ ($n - 1))")
-    end
-    echo $out
+set scratches "L:10" "P:11"
+
+if contains querty $argv
+    # binding conflicts in querty mode
+    set -e scratches[1]
 end
+
+set masked_tags 0
+for scratch in $scratches
+    set s (string split : "$scratch")
+    riverctl map normal Super $s[1] toggle-focused-tags (bitfield $s[2])
+    riverctl map normal Super+Shift $s[1] set-view-tags (bitfield $s[2])
+    set --append masked_tags $s[2]
+end
+riverctl spawn-tagmask (bitfield ! $masked_tags)
 
 # keys are based on canary ortho layout left hand rolls
 #
