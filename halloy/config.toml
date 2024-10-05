@@ -1,0 +1,6 @@
+# https://halloy.squidowl.org/configuration/index.html
+
+[servers.liberachat]
+nickname = "aviva"
+server = "irc.libera.chat"
+channels = ["#river", "##rust", "#halloy"]

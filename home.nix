@@ -36,6 +36,7 @@ in
     age
     sops
     nodejs
+    halloy
 
     # https://discourse.nixos.org/t/google-chrome-not-working-after-recent-nixos-rebuild/43746/8
     (google-chrome.override {
@@ -179,6 +180,8 @@ in
 
   # foot config
   xdg.configFile."foot/foot.ini".source = ./foot/foot.ini;
+
+  xdg.configFile."halloy/config.toml".source = ./halloy/config.toml;
 
   # sioyek config
   xdg.configFile."sioyek" = {
