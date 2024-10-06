@@ -75,6 +75,7 @@ in
         s = "sudo";
         y = "yazi";
         h = "hx";
+        ts = "tailscale";
       };
       # shellAliases = with pkgs; builtins.mapAttrs (name: value: lib.getExe value){
       # 	cat = bat;

@@ -64,6 +64,9 @@ in
     jack.enable = true;
   };
 
+  services.tailscale.enable = true;
+  services.tailscale.useRoutingFeatures = "client";
+
   users.mutableUsers = false;
 
   users.users = {

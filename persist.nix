@@ -12,6 +12,7 @@
       "/var/lib/libvirt/images"
       "/var/lib/libvirt/qemu"
       "/var/lib/bluetooth"
+      "/var/lib/tailscale"
     ];
     files = [
       # machine-id is used by systemd for the journal, if you don't persist this
