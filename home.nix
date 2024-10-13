@@ -94,7 +94,8 @@ in
         diff.sopsdiffer.textconv = "${pkgs.sops}/bin/sops decrypt";
       };
       aliases = {
-        # based on James Munns alias: v
+        # based on James Munns alias: https://bsky.app/profile/jamesmunns.com/post/3l64jdcxl3727
+        # prob not the original lol
         lg = "log --color --graph --pretty=format:'%Cred%h%Creset - %<|(72)%s %Cgreen %<(14)%ar %C(bold blue)<%an>%C(auto)%+d' --abbrev-commit --";
         lgm = "log --color --graph --pretty=format:'%Cred%h%Creset %<|(50,trunc)%s%C(auto)%+d' --abbrev-commit --";
       };
