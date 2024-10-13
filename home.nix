@@ -44,6 +44,8 @@ in
         "--enable-features=UseOzonePlatform"
         "--ozone-platform=wayland"
         "--profile-directory=Default"
+        # fix chromecast, use avahi
+        "--load-media-router-component-extension=1"
       ];
     })
     # https://github.com/Vencord/Vesktop/issues/516

@@ -67,6 +67,8 @@ in
   services.tailscale.enable = true;
   services.tailscale.useRoutingFeatures = "client";
 
+  services.avahi.enable = true;
+
   users.mutableUsers = false;
 
   users.users = {
