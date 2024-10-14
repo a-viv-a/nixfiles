@@ -97,7 +97,7 @@ in
         # based on James Munns alias: https://bsky.app/profile/jamesmunns.com/post/3l64jdcxl3727
         # prob not the original lol
         lg = "log --color --graph --pretty=format:'%Cred%h %Cgreen%>(9,trunc)%ar %C(bold blue)%<(12,trunc)%an%Creset - %s%C(auto)%+d' --abbrev-commit --";
-        lgf = "log --color --graph --pretty=format:'%Cred%h %Cgreen%>(9,trunc)%ar %C(bold blue)%<(12,trunc)%an%Creset - %s%C(auto)%+d%+b' --abbrev-commit --";
+        lgf = "log --color --graph --pretty=format:'%Cred%h %Cgreen%>(9,trunc)%ar %C(bold blue)%<(12,trunc)%an%Creset - %C(cyan)%s%C(auto)%+d%+b' --abbrev-commit --";
         lgm = "log --color --graph --pretty=format:'%Cred%h%Creset %<|(50,trunc)%s%C(auto)%+d' --abbrev-commit --";
       };
     };
