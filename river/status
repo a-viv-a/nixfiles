@@ -42,7 +42,7 @@ set weather_period $happy_weather_period
 function weather_fn
     echo curling weather
     set resp \
-        (curl -sw '%{http_code}' 'https://wttr.in?format=%t,%20feels%20%f%20%c')
+        (curl -sw '\n%{http_code}\n' 'https://wttr.in?format=%t,%20feels%20%f%20%c')
     if test $status -eq 0
         set lines (string split '\n' $resp)
         set weather_desc $lines[1]
