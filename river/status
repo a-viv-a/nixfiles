@@ -36,18 +36,29 @@ end
 
 set weather_out ""
 set happy_weather_period 1800 # 30 minutes
-set failing_weather_period 120 # 2 minutes
+set offline_weather_period 300 # 5 minutes
+set error_weather_period 3600 # 60 minutes
 set weather_period $happy_weather_period
 function weather_fn
     echo curling weather
     set resp \
-        (curl 'https://wttr.in?format=%t,%20feels%20%f%20%c')
+        (curl -sw '%{http_code}' 'https://wttr.in?format=%t,%20feels%20%f%20%c')
     if test $status -eq 0
-        set weather_out "^fg(#ebdbb2)[$(string trim $resp)]"
-        set weather_period $happy_weather_period
+        set lines (string split '\n' $resp)
+        set weather_desc $lines[1]
+        set http_status $lines[-1]
+        if test $http_status = 200
+            set weather_out "^fg(#ebdbb2)[$(string trim $weather_desc)]"
+            set weather_period $happy_weather_period
+        else
+            # http error code :3
+            set weather_out "^fg(#ebdbb2)[http $(string trim $http_status)]"
+            set weather_period $error_weather_period
+        end
     else
-        echo retrying in $failing_weather_period
-        set weather_period $failing_weather_period
+        # offline
+        echo retrying in $offline_weather_period
+        set weather_period $offline_weather_period
     end
 end
 
