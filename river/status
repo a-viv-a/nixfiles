@@ -46,13 +46,14 @@ function weather_fn
     if test $status -eq 0
         set lines (string split '\n' $resp)
         set weather_desc $lines[1]
-        set http_status $lines[-1]
-        if test $http_status = 200
+        set http_code $lines[-1]
+        if test $http_code = 200
             set weather_out "^fg(#ebdbb2)[$(string trim $weather_desc)]"
             set weather_period $happy_weather_period
         else
             # http error code :3
-            set weather_out "^fg(#ebdbb2)[http $(string trim $http_status)]"
+            set http_status_label (http_status $http_code)
+            set weather_out "^fg(#ebdbb2)[$(string lower $http_status_label)]"
             set weather_period $error_weather_period
         end
     else
