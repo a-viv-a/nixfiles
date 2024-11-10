@@ -145,6 +145,9 @@ for rise_i in (seq 1 (count $rises))
     set mode rise_$rise
     riverctl declare-mode $mode
 
+    # allow escaping
+    riverctl map $mode None Escape enter-mode normal
+
     # no matter which of the valid mods are held, enter the correct rise
     for mod in Super Super+Alt Super+Control Super+Shift
         # switch rise mode even if already in a rise mode
