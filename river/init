@@ -56,6 +56,8 @@ riverctl map normal Super+Shift Q exit
 
 riverctl map normal Super Escape spawn 'fish -c powermenu'
 
+riverctl map normal Super Grave spawn 'fish -c toggle_status'
+
 for direction in $directions
     riverctl map normal Super (key $direction) focus-view $direction
 end
