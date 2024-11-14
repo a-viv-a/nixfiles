@@ -252,6 +252,7 @@ end
 
 # screenshot!
 riverctl map normal Super Home spawn 'fish -c screenshot'
+riverctl map normal None Print spawn 'fish -c screenshot'
 
 riverctl default-attach-mode below
 
