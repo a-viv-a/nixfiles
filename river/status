@@ -122,7 +122,9 @@ function power_fn
         set discharge_watts (padmath \
             "$(cat $battery_path/current_now) * $(cat $battery_path/voltage_now) * 1e-12")
         set time_remaining (date -u -d @(math "($(bat $battery_path/charge_now) / $(average_current)) * 60 * 60") +"%-H:%M")
-        set detail " $discharge_watts""w $time_remaining "
+        # 1.5 amps current min height
+        set discharge_graph (unicode_graph --min_height=1500000 $current_samples)
+        set detail " $discharge_watts""w $time_remaining $discharge_graph "
     end
     if test "$power_status" = Charging
         set detail "  "
