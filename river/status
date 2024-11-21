@@ -66,13 +66,17 @@ end
 set cpu_out ""
 set cpu_period 15
 function cpu_fn
-    set cpu_out "^fg($fish_color_command)  $(grep -o "^[^ ]*" /proc/loadavg)"
+    set -l cpu (grep -o "^[^ ]*" /proc/loadavg)
+    set -l graph (tracked_statistic_graph --key=cpu --min_height=8 --width=5 $cpu)
+    set cpu_out "^fg($fish_color_command)  $cpu $graph"
 end
 
 set memory_out ""
 set memory_period 15
 function memory_fn
-    set memory_out "^fg($fish_color_quote)  $(free -h | sed -n "2s/\([^ ]* *\)\{2\}\([^ ]*\).*/\2/p")"
+    set -l memory (free -h | sed -n "2s/\([^ ]* *\)\{2\}\([^ ]*\).*/\2/p")
+    # set -l graph (tracked_statistic_graph --key=memory --min_height=16 $memory)
+    set memory_out "^fg($fish_color_quote)  $memory"
 end
 
 set brightness_out ""
@@ -123,8 +127,8 @@ function power_fn
             "$(cat $battery_path/current_now) * $(cat $battery_path/voltage_now) * 1e-12")
         set time_remaining (date -u -d @(math "($(bat $battery_path/charge_now) / $(average_current)) * 60 * 60") +"%-H:%M")
         # 1.5 amps current min height
-        set discharge_graph (unicode_graph --min_height=1500000 $current_samples)
-        set detail " $discharge_watts""w $time_remaining $discharge_graph "
+        set watts_graph (tracked_statistic_graph --key=watts --min_height=30 --width=5 $discharge_watts)
+        set detail " $discharge_watts""w $time_remaining $watts_graph "
     end
     if test "$power_status" = Charging
         set detail "  "

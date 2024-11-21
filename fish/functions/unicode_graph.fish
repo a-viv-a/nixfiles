@@ -4,8 +4,8 @@ function unicode_graph
         -- $argv
     or return
 
-    set bar_unicode _ '▁' '▂' '▃' '▄' '▅' '▆' '▇' '█'
-    set quantize 9
+    set bar_unicode '▁' '▂' '▃' '▄' '▅' '▆' '▇' '█'
+    set quantize 8
 
     set -q _flag_min_height; or set _flag_min_height 0
 
