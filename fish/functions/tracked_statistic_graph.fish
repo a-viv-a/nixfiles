@@ -19,5 +19,5 @@ function tracked_statistic_graph
 
     set -q _flag_min_height; and set -l min_height "--min_height=$_flag_min_height"
 
-    unicode_graph $min_height $$data
+    string pad -w $_flag_width (unicode_graph $min_height $$data)
 end
