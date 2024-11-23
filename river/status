@@ -112,9 +112,8 @@ set memory_out ""
 set memory_period 15
 function memory_fn
     set -l memory (free -h | sed -n "2s/\([^ ]* *\)\{2\}\([^ ]*\).*/\2/p")
-    # think we ever drop below a gig? i dont...
-    set -l trimmed (string replace 'Gi' '' "$memory")
-    set -l graph (tracked_statistic_graph -kmemory -h16 -w5 "$trimmed")
+    set -l memory_bytes (free | sed -n "2s/\([^ ]* *\)\{2\}\([^ ]*\).*/\2/p")
+    set -l graph (tracked_statistic_graph -kmemory -h1.6e+10 -w5 $memory_bytes)
     set memory_out "^fg($fish_color_quote)  $memory $graph"
 end
 
