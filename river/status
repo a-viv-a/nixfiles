@@ -231,16 +231,6 @@ echo min period: $min_period
 # instead of computing the right initial seconds, let period slip correct
 set sec 0
 
-# set inital values
-begin
-    for name in $names
-        {$name}_fn
-    end
-    write_display
-end
-
-# ---- end startup work ----
-
 # try to prevent drift
 function compute_sleep_time
     set current_seconds (date +%S)
@@ -277,6 +267,17 @@ function refresh
         rm $needs_refresh_dir/$refresh
     end
 end
+
+# set inital values
+begin
+    for name in $names
+        {$name}_fn
+    end
+    refresh
+    write_display
+end
+
+# ---- end startup work ----
 
 echo entering main loop
 
