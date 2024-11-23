@@ -1,18 +1,48 @@
 #!/usr/bin/env fish
 
-# math, rounded and padded to 1 sig fig to reduce shift
-function padmath -a compute
-    printf "%.1f" (math --scale 1 $compute)
+# this status is implemented by a series of generator functions called on different periods
+# by convention these functions are paired with an out variable and a period variable
+# the out variable is the string representation of the output of generation
+# the period denotes how frequently in seconds to run the generator
+#
+# a period of -1 denotes a generator which should not be run on a period
+#
+# only functions whos base name is listed in the names variable will be checked
+
+set names wifi audio player cpu memory brightness power datetime weather
+
+# this sends the status text over the fifo pipe, and is called at the bottom of the file
+function write_display
+    echo "all status $player_out $weather_out $audio_out $wifi_out $brightness_out $memory_out $cpu_out $power_out $datetime_out" >$FIFO
 end
+
+# ---- utils ----
+
+function subprocess_call --argument name
+    fish -c "$(functions $name); $name" &
+end
+
+# ---- end utils ----
+
+# ---- generators ----
+
+# a repeated pattern is to use refresh status inside a subprocess computation for "async" work
+# the computation is run inside a subprocess that writes its result to the refresh dir
 
 set wifi_out ""
 set wifi_period 120
 function wifi_fn
-    set wifi_out "^fg($fish_color_redirection)[$(nmcli -f IN-USE,SSID,RATE,SIGNAL dev wifi | awk '/\*/ {$1=""; print $0 }' | string trim)%]"
+    # this is an expensive piece of work...
+    function compute_wifi
+        set wifi_value (nmcli -f IN-USE,SSID,RATE,SIGNAL dev wifi | awk '/\*/ {$1=""; print $0 }' | string trim)
+        refresh_status wifi "^fg($fish_color_redirection)[$wifi_value%]"
+    end
+    subprocess_call compute_wifi
 end
 
 set audio_out ""
-set audio_period 240
+# refreshed on keyboard shortcut
+set audio_period -1
 function audio_fn
     set default_sink (wpctl get-volume @DEFAULT_AUDIO_SINK@)
     set volume (echo $default_sink | rg -o ': ((?:\\d|\\.)+)' -r '$1')
@@ -27,18 +57,25 @@ function audio_fn
 end
 
 set player_out ""
-set player_period 240
+set player_period -1
+# player is bound to playerctl events
 function player_fn
-    set player_out \
-        (playerctl --no-messages metadata --format \
-     "^fg($fish_color_comment){{ title }} by {{ artist }}")
+    set player_out ""
 end
+function player_watcher
+    fish -c "playerctl --follow metadata --format '{{title}} {{artist}}'" | while read -l value
+        refresh_status player "^fg($fish_color_comment)$value"
+    end
+end
+subprocess_call player_watcher
 
 set weather_out ""
 set happy_weather_period 1800 # 30 minutes
 set offline_weather_period 300 # 5 minutes
 set error_weather_period 3600 # 60 minutes
 set weather_period $happy_weather_period
+# this could be in a subprocess, but its very infrequent...
+# and subprocesses cant mutate periods
 function weather_fn
     echo curling weather
     set resp \
@@ -116,6 +153,11 @@ function average_current
     echo $average
 end
 
+# math, rounded and padded to 1 sig fig to reduce shift
+function padmath -a compute
+    printf "%.1f" (math --scale 1 $compute)
+end
+
 set power_out ""
 set power_period 15
 set battery_icons 󰂃 󰁺 󰁻 󰁼 󰁽 󰁾 󰁿 󰂀 󰂁 󰂂 󰁹
@@ -147,19 +189,18 @@ function datetime_fn
     set datetime_out "^fg(ffffff)$(date "+%a %d %b %I:%M %P")"
 end
 
-set names wifi audio player cpu memory brightness power datetime weather
-
-function write_display
-    echo "all status $player_out $weather_out $audio_out $wifi_out $brightness_out $memory_out $cpu_out $power_out $datetime_out" >$FIFO
-end
+# ---- end generators ----
 
 set status_pid_dir "$XDG_RUNTIME_DIR/status_pid"
 
-# remove the old one!
+# ---- startup work ----
+
+# remove the old status if it is still running
 if test -e $status_pid_dir
     kill (cat $status_pid_dir)
 end
 
+# store our pid so a future status can kill us
 printf "%s" "$fish_pid" >$status_pid_dir
 
 set FIFO "$XDG_RUNTIME_DIR/sandbar"
@@ -170,24 +211,18 @@ end
 
 set needs_refresh_dir "$XDG_RUNTIME_DIR/status_needs_refresh"
 
+# clean out any previous refresh requests
 if test -e $needs_refresh_dir
     rm $needs_refresh_dir/*
     rmdir $needs_refresh_dir
 end
 mkdir $needs_refresh_dir
 
-function update -a name
-    set period {$name}_period
-    if test (math "$sec % $$period") -eq 0
-        {$name}_fn
-    end
-end
-
 set min_period 60
 
 for name in $names
     set p {$name}_period
-    if test $$p -lt $min_period
+    if test $$p -ne -1 -a $$p -lt $min_period
         set min_period $$p
     end
 end
@@ -204,31 +239,43 @@ begin
     write_display
 end
 
+# ---- end startup work ----
+
 # try to prevent drift
 function compute_sleep_time
     set current_seconds (date +%S)
     math "$min_period - ($current_seconds % $min_period)"
 end
 
+function update -a name
+    set period {$name}_period
+    if test $$period -ne -1 -a (math "$sec % $$period") -eq 0
+        {$name}_fn
+    end
+end
+
+
 function tick
     echo "tick $sec"
     for name in $names
         update $name
     end
-    write_display
-    # if we have fallen catastrophically out of sync, slip some period(s) to line up
-    set current_seconds (date +%S)
-    set sec (math "$sec + $min_period + (floor (($current_seconds - ($sec % 60)) / $min_period) * $min_period)")
 end
 
 function refresh
     echo "doing refresh"
     for refresh in (ls $needs_refresh_dir)
-        echo "refreshing $refresh"
-        {$refresh}_fn
+        set value (cat $needs_refresh_dir/$refresh)
+        # if the refresh request contains data use it instead of the generator function
+        if test -n "$value"
+            echo "refreshing $refresh; applying value"
+            set {$refresh}_out $value
+        else
+            echo "refreshing $refresh; running fn"
+            {$refresh}_fn
+        end
         rm $needs_refresh_dir/$refresh
     end
-    write_display
 end
 
 echo entering main loop
@@ -236,10 +283,15 @@ echo entering main loop
 while true
     set awoken true
     sleep (compute_sleep_time) && set awoken false &
-    wait
+    wait sleep 2>/dev/null
     if $awoken
         refresh
     else
         tick
     end
+    write_display
+    # if we have fallen catastrophically out of sync, slip some period(s) to line up
+    # this prioritizes clock accuracy over hitting every period consistently
+    set current_seconds (date +%S)
+    set sec (math "$sec + $min_period + (floor (($current_seconds - ($sec % 60)) / $min_period) * $min_period)")
 end

@@ -1,6 +1,0 @@
-#!/usr/bin/env fish
-
-# this is inefficent, we should pass the message instead of computing it twice
-fish -c "playerctl --follow metadata --format '{{title}} {{artist}}'" | while read -l f
-    refresh_status player
-end

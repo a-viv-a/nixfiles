@@ -305,7 +305,6 @@ tail -f /tmp/wob | wob &
 
 riverctl spawn "$HOME/.config/river/status"
 riverctl spawn "$HOME/.config/river/bar"
-riverctl spawn "$HOME/.config/river/player_watcher"
 
 killall swayidle
 riverctl spawn "swayidle -w -C /etc/swayidle/config"
