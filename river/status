@@ -63,8 +63,8 @@ function player_fn
     set player_out ""
 end
 function player_watcher
-    fish -c "playerctl --follow metadata --format '{{title}} {{artist}}'" | while read -l value
-        refresh_status player "^fg($fish_color_comment)$value"
+    fish -c "playerctl --follow metadata --format '{{title}} by {{artist}}'" | while read -l value
+        refresh_status player "^fg($fish_color_comment)$(string shorten --max 60 "$value")"
     end
 end
 subprocess_call player_watcher
