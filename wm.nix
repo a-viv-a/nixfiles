@@ -1,18 +1,18 @@
 { pkgs, lib, ... }:
 {
   programs.river.enable = true;
-  nixpkgs.overlays = [
-    (final: prev: {
-      river = prev.river.overrideAttrs (old: {
-        patches = (old.patches or [ ]) ++ [
-          (prev.fetchpatch {
-            url = "https://codeberg.org/river/river/pulls/1145.diff";
-            hash = "sha256-ZCDgVmv3ZRdRfhFDovf2Yw92OeH/hfo1yohR1h/ahhA=";
-          })
-        ];
-      });
-    })
-  ];
+  # nixpkgs.overlays = [
+  #   (final: prev: {
+  #     river = prev.river.overrideAttrs (old: {
+  #       patches = (old.patches or [ ]) ++ [
+  #         (prev.fetchpatch {
+  #           url = "https://codeberg.org/river/river/pulls/1145.diff";
+  #           hash = "sha256-ZCDgVmv3ZRdRfhFDovf2Yw92OeH/hfo1yohR1h/ahhA=";
+  #         })
+  #       ];
+  #     });
+  #   })
+  # ];
   programs.river.extraPackages = with pkgs; [
     way-displays
     wl-clipboard

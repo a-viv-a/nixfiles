@@ -50,10 +50,10 @@ in
   boot.loader.efi.canTouchEfiVariables = true;
 
   # can't have more than one!
-  time.timeZone = "America/Chicago";
-  # services.automatic-timezoned.enable = true;
-  # services.geoclue2.geoProviderUrl = "https://beacondb.net/v1/geolocate";
+  # time.timeZone = "America/Chicago";
   # time.timeZone = "America/Los_Angeles";
+  services.automatic-timezoned.enable = true;
+  services.geoclue2.geoProviderUrl = "https://api.beacondb.net/v1/geolocate?key=geoclue_nixos";
 
   security.rtkit.enable = true;
   services.pipewire = {
@@ -119,16 +119,10 @@ in
     Defaults lecture = never
   '';
 
-  fonts.packages = with pkgs; [
-    # don't need the rest!
-    # https://nixos.wiki/wiki/Fonts#Installing_specific_fonts_from_nerdfonts
-    (nerdfonts.override {
-      fonts = [
-        "DroidSansMono"
-        "Hack"
-        "Iosevka"
-      ];
-    })
+  fonts.packages = with pkgs.nerd-fonts; [
+    droid-sans-mono
+    hack
+    iosevka
   ];
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
