@@ -38,6 +38,8 @@
         # fish history, just persisting the history file causes issues
         # https://github.com/fish-shell/fish-shell/issues/10730
         ".local/share/fish/"
+        # sioyek db, history of documents
+        ".local/share/sioyek"
         # its a tossup but i like my cache sticking around!
         ".cache/"
         "downloads"
