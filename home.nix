@@ -194,12 +194,6 @@ in
 
   xdg.configFile."halloy/config.toml".source = ./halloy/config.toml;
 
-  # sioyek config
-  xdg.configFile."sioyek" = {
-    source = ./sioyek;
-    recursive = true;
-  };
-
   # Nicely reload system units when changing configs
   systemd.user.startServices = "sd-switch";
 
