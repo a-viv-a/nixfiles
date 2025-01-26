@@ -37,6 +37,7 @@ in
     sops
     nodejs
     halloy
+    inkscape
 
     # https://discourse.nixos.org/t/google-chrome-not-working-after-recent-nixos-rebuild/43746/8
     (google-chrome.override {

@@ -41,7 +41,7 @@
             ./configuration.nix
             ./greetd.nix
             ./wm.nix
-            ./sync.nix
+            # ./sync.nix
             ./laptop.nix
             home-manager.nixosModules.home-manager
             sops-nix.nixosModules.sops
