@@ -48,7 +48,6 @@
         "raw_music"
         "screenshots"
         "repos"
-        "scratch"
         # TODO: use nix magic to keep this lined up with syncthing folders
         "garden"
         # google is a mess otherwise
