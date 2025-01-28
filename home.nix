@@ -38,6 +38,7 @@ in
     nodejs
     halloy
     inkscape
+    watchexec
 
     # https://discourse.nixos.org/t/google-chrome-not-working-after-recent-nixos-rebuild/43746/8
     (google-chrome.override {
