@@ -1,4 +1,4 @@
-function wpfind
+function wp_find
     pw-dump | node -e "
 const stdin = process.stdin
 let data = ''
