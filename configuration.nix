@@ -43,6 +43,7 @@ in
 
   networking.hostName = "blade";
   networking.networkmanager.enable = true;
+  networking.modemmanager.enable = false;
 
   security.polkit.enable = true;
 
@@ -81,6 +82,7 @@ in
       extraGroups = [
         "wheel"
         "libvirtd"
+        "dialout" # allow serial!
       ];
       isNormalUser = true;
       shell = pkgs.fish;
