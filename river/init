@@ -13,7 +13,7 @@ riverctl border-color-unfocused 0x$fish_color_autosuggestion
 # we need to pass these variables so screenshare works
 systemctl --user import-environment DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
 
-riverctl spawn-command (which fish) -c
+riverctl spawn-command (realpath (which fish)) -c
 
 set -Ux LAYOUT canary
 set k_left M
