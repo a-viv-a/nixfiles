@@ -13,6 +13,8 @@ riverctl border-color-unfocused 0x$fish_color_autosuggestion
 # we need to pass these variables so screenshare works
 systemctl --user import-environment DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
 
+riverctl spawn-command (which fish) -c
+
 set -Ux LAYOUT canary
 set k_left M
 set k_down N
@@ -44,19 +46,19 @@ riverctl map normal Super R spawn fuzzel
 
 # riverctl map normal Super B spawn google-chrome-stable
 
-riverctl map normal Super C spawn 'fish -c "fuzzel --select=\$(current_toplevel)"'
+# riverctl map normal Super C spawn 'fuzzel --select=\$(current_toplevel)'
 
-riverctl map normal Super O spawn 'fish -c "open (float_choose)"'
+riverctl map normal Super O spawn 'open (float_choose)'
 
-riverctl map normal Super W spawn 'fish -c "floating_fish helix_edit_primary"'
+riverctl map normal Super W spawn 'floating_fish helix_edit_primary'
 
 riverctl map normal Super Backspace close
 
 riverctl map normal Super+Shift Q exit
 
-riverctl map normal Super Escape spawn 'fish -c powermenu'
+riverctl map normal Super Escape spawn powermenu
 
-riverctl map normal Super Grave spawn 'fish -c toggle_status'
+riverctl map normal Super Grave spawn toggle_status
 
 for direction in $directions
     riverctl map normal Super (key $direction) focus-view $direction
@@ -227,32 +229,32 @@ riverctl map passthrough Super F11 enter-mode normal
 # Various media key mapping examples for both normal and locked mode
 for mode in normal locked
     # TODO: dedupe this somehow...
-    riverctl map -repeat $mode None XF86AudioRaiseVolume spawn "fish -c 'set_volume \"5%+\"'"
-    riverctl map -repeat $mode Super Up spawn "fish -c 'set_volume \"5%+\"'"
-    riverctl map -repeat $mode None XF86AudioLowerVolume spawn "fish -c 'set_volume \"5%-\"'"
-    riverctl map -repeat $mode Super Down spawn "fish -c 'set_volume \"5%-\"'"
-    riverctl map $mode None XF86AudioMute spawn 'fish -c toggle_mute'
-    riverctl map $mode Super Slash spawn 'fish -c toggle_mute'
+    riverctl map -repeat $mode None XF86AudioRaiseVolume spawn "set_volume 5%+"
+    riverctl map -repeat $mode Super Up spawn "set_volume 5%+"
+    riverctl map -repeat $mode None XF86AudioLowerVolume spawn "set_volume 5%-"
+    riverctl map -repeat $mode Super Down spawn "set_volume 5%-"
+    riverctl map $mode None XF86AudioMute spawn toggle_mute
+    riverctl map $mode Super Slash spawn toggle_mute
 
     # Control MPRIS aware media players with playerctl (https://github.com/altdesktop/playerctl)
-    riverctl map $mode None XF86AudioMedia spawn 'playerctl play-pause'
-    riverctl map $mode None XF86AudioPlay spawn 'playerctl play-pause'
-    riverctl map $mode Super Space spawn 'playerctl play-pause'
+    riverctl map $mode None XF86AudioMedia spawn "playerctl play-pause"
+    riverctl map $mode None XF86AudioPlay spawn "playerctl play-pause"
+    riverctl map $mode Super Space spawn "playerctl play-pause"
 
-    riverctl map $mode Super Left spawn 'playerctl previous'
-    riverctl map $mode None XF86AudioPrev spawn 'playerctl previous'
-    riverctl map $mode Super Right spawn 'playerctl next'
-    riverctl map $mode None XF86AudioNext spawn 'playerctl next'
+    riverctl map $mode Super Left spawn "playerctl previous"
+    riverctl map $mode None XF86AudioPrev spawn "playerctl previous"
+    riverctl map $mode Super Right spawn "playerctl next"
+    riverctl map $mode None XF86AudioNext spawn "playerctl next"
 
-    riverctl map -repeat $mode None XF86MonBrightnessUp spawn "fish -c 'set_brightness \"+15\"'"
-    riverctl map -repeat $mode Super+Control Up spawn "fish -c 'set_brightness \"+15\"'"
-    riverctl map -repeat $mode None XF86MonBrightnessDown spawn "fish -c 'set_brightness \"-15\"'"
-    riverctl map -repeat $mode Super+Control Down spawn "fish -c 'set_brightness \"-15\"'"
+    riverctl map -repeat $mode None XF86MonBrightnessUp spawn "set_brightness +15"
+    riverctl map -repeat $mode Super+Control Up spawn "set_brightness +15"
+    riverctl map -repeat $mode None XF86MonBrightnessDown spawn "set_brightness -15"
+    riverctl map -repeat $mode Super+Control Down spawn "set_brightness -15"
 end
 
 # screenshot!
-riverctl map normal Super Home spawn 'fish -c screenshot'
-riverctl map normal None Print spawn 'fish -c screenshot'
+riverctl map normal Super Home spawn screenshot
+riverctl map normal None Print spawn screenshot
 
 riverctl default-attach-mode below
 

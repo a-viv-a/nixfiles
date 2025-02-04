@@ -1,18 +1,19 @@
 { pkgs, lib, ... }:
 {
   programs.river.enable = true;
-  # nixpkgs.overlays = [
-  #   (final: prev: {
-  #     river = prev.river.overrideAttrs (old: {
-  #       patches = (old.patches or [ ]) ++ [
-  #         (prev.fetchpatch {
-  #           url = "https://codeberg.org/river/river/pulls/1145.diff";
-  #           hash = "sha256-ZCDgVmv3ZRdRfhFDovf2Yw92OeH/hfo1yohR1h/ahhA=";
-  #         })
-  #       ];
-  #     });
-  #   })
-  # ];
+  nixpkgs.overlays = [
+    (final: prev: {
+      river = prev.river.overrideAttrs (old: {
+        patches = (old.patches or [ ]) ++ [
+          (prev.fetchpatch {
+            url = "https://codeberg.org/river/river/pulls/1185.diff";
+            hash = "sha256-0hbftEVeHCGMhwrriwjnz+45NnqgFBEEErhIsvUqQxE=";
+          })
+          # ./river.patch
+        ];
+      });
+    })
+  ];
   programs.river.extraPackages = with pkgs; [
     way-displays
     wl-clipboard
@@ -71,7 +72,7 @@
   # 		refresh_status wifi
   # 			'';
   # 			type = "basic";
-  # 		}	
+  # 		}
   # ];
 
   # https://nixos.wiki/wiki/Sway#Inferior_performance_compared_to_other_distributions
