@@ -4,4 +4,5 @@ function wp_setdefault
         wpctl set-default $id
     end
     wpctl status
+    refresh_status audio
 end
