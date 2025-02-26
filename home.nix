@@ -133,13 +133,26 @@ in
           lsp.display-inlay-hints = true;
         };
       };
-      languages.language = [
-        {
-          name = "nix";
-          auto-format = true;
-          formatter.command = lib.getExe pkgs.nixfmt-rfc-style;
-        }
-      ];
+      languages = {
+        language = [
+          {
+            name = "nix";
+            auto-format = true;
+            formatter.command = lib.getExe pkgs.nixfmt-rfc-style;
+          }
+          {
+            name = "fish";
+            language-servers = [ "fish-lsp" ];
+          }
+        ];
+        language-server.fish-lsp = {
+          command = lib.getExe pkgs.fish-lsp;
+          args = [ "start" ];
+          environment = {
+            fish_lsp_show_client_popups = "false";
+          };
+        };
+      };
       themes = {
         dark_plus_plus = {
           "inherits" = "dark_plus";
