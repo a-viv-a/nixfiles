@@ -29,7 +29,6 @@ in
     rivercarro
     gparted
     yazi
-    sioyek
     mosh
     usbutils
     killall
@@ -158,6 +157,13 @@ in
           "inherits" = "dark_plus";
           # "ui.background" = { };
         };
+      };
+    };
+
+    sioyek = {
+      enable = true;
+      config = {
+        should_launch_new_window = "1";
       };
     };
   };
