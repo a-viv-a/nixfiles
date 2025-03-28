@@ -173,12 +173,12 @@ for rise_i in (seq 1 (count $rises))
 
         # default behavior is to focus a tag
         when Super "riverctl set-focused-tags $tag"
-        # alt behavior is to toggle visibility of tag
-        when Super+Alt "riverctl toggle-focused-tags $tag"
+        # control behavior toggles the focus of a tag
+        when Super+Control "riverctl toggle-focused-tags $tag"
         # shift behavior sets the tag for the given view
         when Super+Shift "riverctl set-view-tags $tag"
-        # control behavior toggles the tag for the given view
-        when Super+Control "riverctl toggle-focused-tags $tag"
+        # alt behavior toggles the tag for the given view
+        when Super+Alt "riverctl toggle-view-tags $tag"
     end
 end
 
