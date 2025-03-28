@@ -18,6 +18,7 @@ in
     xclip
     tree
     ripgrep
+    ripgrep-all
     micro
     tealdeer
     bat
