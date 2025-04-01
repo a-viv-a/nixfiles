@@ -4,12 +4,13 @@ function wiktionaryrender
     read -l -z str
 
     set templates \
+        liter "{{...}}" "..." \
         style "a|accent" (set_color red) \
         dynfn "s|sense" parens (set_color -i) \
         dynfn "lb|lbl|label" label (set_color -id) \
         style "ng|non-gloss" (set_color -i) \
         dynfn ux ux (set_color -i cyan) \
-        dynfn quote-book quote-book (set_color magenta)
+        dynfn "quote-book|quote-journal|quote-text" quote (set_color magenta)
 
     set -x reset_style (set_color normal)
 
@@ -26,7 +27,9 @@ function wiktionaryrender
             set prefix "$tags[1] "
             set --erase tags[1]
         end
-        echo "($prefix$(string join ', ' $tags))"
+        # handle the weird _ for no comma, trim around lines
+        set body (string split '\n' $tags | string trim | string join ', ' | string replace -a ', _,' '')
+        echo "($prefix$body)"
     end
 
     function boldword
@@ -42,13 +45,22 @@ function wiktionaryrender
         echo -e (boldword $argv[2..])
     end
 
-    function quote-book
+    function first
+        for arg in $argv
+            if test "$arg" != ""
+                echo $arg
+            end
+        end
+    end
+
+    function quote
         for arg in $argv
             string match -rg '(?<key>\\w+)=(?<val>[\\S\\s]*)' $arg >/dev/null
 
             set "k_$key" (string split '\n' "$val" | string trim | string join " ")
         end
-        echo -e "$k_year, $k_author, $k_title\n$(boldword $k_text)"
+        set_color -d white
+        echo -e "$(string join ", " $k_year $k_author $k_journal $k_title):$reset_style $(boldword (first "$k_text" "$k_passage"))"
     end
 
     set --global i 1
@@ -62,7 +74,13 @@ function wiktionaryrender
         set pfrag $templates[(i++)]
         set pattern "{{(?:$pfrag)\\|((?:.|\\n)*?)}}"
 
-        if test "$type" = dynfn
+        if test "$type" = liter
+            set replacement $templates[(i++)]
+            set str (string replace -a "$pfrag" "$replacement" "$str" | string collect)
+        else if test "$type" = style
+            set style $templates[(i++)]
+            set str (string replace -r -a $pattern "$style\$1$reset_style" $str | string collect)
+        else
             set fn $templates[(i++)]
             set style $templates[(i++)]
             while true
@@ -76,9 +94,6 @@ function wiktionaryrender
                 set rinner ($fn $args | string replace -a "$reset_style" "$reset_style$style" | string collect)
                 set str (string replace $rtarget "$style$rinner$reset_style" $scratch | string collect)
             end
-        else
-            set style $templates[(i++)]
-            set str (string replace -r -a $pattern "$style\$1$reset_style" $str | string collect)
         end
     end
     set --erase i
