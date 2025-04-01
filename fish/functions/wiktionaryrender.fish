@@ -1,16 +1,28 @@
-function wiktionaryrender
+function wiktionaryrender -a word
     read -l -z str
-
-    function label
-        set tags $argv[2..]
-        string join ', ' $tags
-    end
 
     set templates \
         style "a|accent" (set_color red) \
-        style "s|sense" (set_color blue) \
-        vargs "lb|lbl|label" label (set_color blue) \
-        style "ng|non-gloss" (set_color green)
+        dynfn "s|sense" parens (set_color -i) \
+        dynfn "lb|lbl|label" label (set_color -id) \
+        style "ng|non-gloss" (set_color -i) \
+        style ux (set_color red)
+
+    function parens
+        echo "($argv[1])"
+    end
+
+    function label
+        set tags $argv[2..]
+        set prefix ""
+        if test \
+                "$tags[1]" = chiefly -o \
+                "$tags[1]" = "of a"
+            set prefix "$tags[1] "
+            set --erase tags[1]
+        end
+        echo "($prefix$(string join ', ' $tags))"
+    end
 
     set reset_style (set_color normal)
     set --global i 1
@@ -24,7 +36,7 @@ function wiktionaryrender
         set pfrag $templates[(i++)]
         set pattern "{{(?:$pfrag)\\|((?:.|\\n)*?)}}"
 
-        if test "$type" = vargs
+        if test "$type" = dynfn
             set fn $templates[(i++)]
             set style $templates[(i++)]
             while true
