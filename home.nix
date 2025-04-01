@@ -1,4 +1,9 @@
-{ pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  rustbin,
+  ...
+}:
 let
   cursor = {
     pkg = pkgs.bibata-cursors;

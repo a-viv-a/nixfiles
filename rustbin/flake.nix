@@ -19,7 +19,11 @@
         naersk-lib = pkgs.callPackage naersk { };
       in
       {
-        defaultPackage = naersk-lib.buildPackage ./.;
+        # defaultPackage = naersk-lib.buildPackage ./.;
+        packages.distsort = naersk-lib.buildPackage {
+          pname = "distsort";
+          src = ./.;
+        };
         devShell =
           with pkgs;
           mkShell {

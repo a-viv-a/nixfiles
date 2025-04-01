@@ -1,0 +1,9 @@
+[package]
+name = "distsort"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+miette = { version = "7.5.0", features = ["fancy"] }
+rayon = "1.10.0"
+strsim = "0.11.1"

@@ -52,6 +52,8 @@ riverctl map normal Super O spawn 'open (float_choose)'
 
 riverctl map normal Super W spawn 'floating_fish helix_edit_primary'
 
+riverctl map normal Super Semicolon spawn 'floating_fish nearby'
+
 riverctl map normal Super Backspace close
 
 riverctl map normal Super+Shift Q exit
