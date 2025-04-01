@@ -1,4 +1,5 @@
-function wiktionaryrender -a word
+function wiktionaryrender
+    set -x word $argv[1]
     read -l -z str
 
     set templates \
@@ -6,7 +7,9 @@ function wiktionaryrender -a word
         dynfn "s|sense" parens (set_color -i) \
         dynfn "lb|lbl|label" label (set_color -id) \
         style "ng|non-gloss" (set_color -i) \
-        style ux (set_color red)
+        dynfn ux ux (set_color -i cyan)
+
+    set -x reset_style (set_color normal)
 
     function parens
         echo "($argv[1])"
@@ -24,7 +27,23 @@ function wiktionaryrender -a word
         echo "($prefix$(string join ', ' $tags))"
     end
 
-    set reset_style (set_color normal)
+    function boldword
+        if set -q word
+            set lines (string replace -a "$word" "$(set_color -o)$word$reset_style" $argv)
+        else
+            set lines $argv
+        end
+        string join "\n" $lines
+    end
+
+    function ux -a code
+        if test "$code" != en
+            set_color red
+            echo $argv
+        end
+        echo -e (boldword $argv[2..])
+    end
+
     set --global i 1
     function i++
         echo $i
@@ -47,7 +66,7 @@ function wiktionaryrender -a word
                     break
                 end
                 set args (string match -g -r $pattern $str | string split "|")
-                set rinner ($fn $args)
+                set rinner ($fn $args | string replace -a "$reset_style" "$reset_style$style" | string collect)
                 set str (string replace $rtarget "$style$rinner$reset_style" $scratch | string collect)
             end
         else
