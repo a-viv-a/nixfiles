@@ -10,7 +10,7 @@ function wiktionaryrender
         dynfn "lb|lbl|label" label (set_color -id) \
         style "ng|non-gloss" (set_color -i) \
         dynfn ux ux (set_color -i cyan) \
-        dynfn "quote-book|quote-journal|quote-text" quote (set_color magenta)
+        dynfn "quote-book|quote-journal|quote-text" quote ""
 
     set -x reset_style (set_color normal)
 
