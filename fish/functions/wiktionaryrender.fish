@@ -15,6 +15,7 @@ function wiktionaryrender
         dynfn ux ux (set_color -i cyan) \
         dynfn "quote-book|quote-journal|quote-text|quote-web" quote "" \
         dynfn "plural of" plural_of (set_color -i) \
+        dynfun cap cap "" \
         dynfn w wikilink (set_color blue)
 
     function parens
@@ -80,6 +81,12 @@ function wiktionaryrender
         echo "plural of $entry"
     end
 
+    function cap -a p append
+        set b (string sub --length 1 "$p" | string upper)
+        set r (string sub -s 2 "$p")
+        echo "$b$r$append"
+    end
+
     function wikilink -a page display lang
         if test -z "$display"
             set display "$page"
@@ -96,7 +103,7 @@ function wiktionaryrender
         set type $templates[(i++)]
 
         set pfrag $templates[(i++)]
-        set pattern "{{(?:$pfrag)\\|((?:.|\\n)*?)}}"
+        set pattern "{{(?:$pfrag)\\|([\\S\\s]*?)}}"
 
         if test "$type" = liter
             set replacement $templates[(i++)]
