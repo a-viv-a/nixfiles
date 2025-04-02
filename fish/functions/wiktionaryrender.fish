@@ -3,16 +3,19 @@ function wiktionaryrender
     set -x eword (string escape --style=regex "$word")
     read -l -z str
 
+    set -x reset_style (set_color normal)
+
     set templates \
-        liter "{{...}}" "..." \
+        liter "{{...}}" " ... " \
+        liter "{{nb...}}" " ..." \
         style "a|accent" (set_color red) \
         dynfn "s|sense" parens (set_color -i) \
         dynfn "lb|lbl|label" label (set_color -id) \
         style "ng|non-gloss" (set_color -i) \
         dynfn ux ux (set_color -i cyan) \
-        dynfn "quote-book|quote-journal|quote-text" quote "" \
-        dynfn "plural of" plural_of (set_color -i)
-    set -x reset_style (set_color normal)
+        dynfn "quote-book|quote-journal|quote-text|quote-web" quote "" \
+        dynfn "plural of" plural_of (set_color -i) \
+        dynfn w wikilink (set_color blue)
 
     function parens
         echo "($argv[1])"
@@ -60,12 +63,28 @@ function wiktionaryrender
 
             set "k_$key" (string split '\n' "$val" | string trim | string join " ")
         end
+        # messing with the colors is to result in a "two color" replacement where the title is dim
+        # but the quote is not. any reset is replaced with the overall replacement color, so we need
+        # to maintain our partial color ourselves
+        if test (string sub --length 2 "$k_author") = "w:"
+            set k_author "$(set_color blue)\e$(wikilink (string sub -s 3 "$k_author"))$(set_color -d white)"
+        end
+        if set -q k_url
+            set k_url "$(set_color blue)\e$(hyperlink (string replace -a " " "" "$k_url"))$(set_color -d white)"
+        end
         set_color -d white
-        echo -e "$(string join ", " $k_year $k_author $k_journal $k_title):$reset_style $(boldword (first "$k_text" "$k_passage"))"
+        echo -e "$(string join ", " $k_year $k_author $k_journal $k_url $k_title $k_work):$reset_style $(boldword (first "$k_text" "$k_passage"))"
     end
 
     function plural_of -a lang entry
         echo "plural of $entry"
+    end
+
+    function wikilink -a page display lang
+        if test -z "$display"
+            set display "$page"
+        end
+        hyperlink "https://en.wikipedia.com/wiki/$(string escape --style=url "$page")" "$display"
     end
 
     set --global i 1
