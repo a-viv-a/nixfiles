@@ -8,6 +8,9 @@ function wiktionaryrender
     set templates \
         liter "{{...}}" " ... " \
         liter "{{nb...}}" " ..." \
+        # should we merge strips?
+        strip senseno \
+        strip senseid \
         style "a|accent" (set_color red) \
         dynfn "s|sense" parens (set_color -i) \
         dynfn "lb|lbl|label" label (set_color -id) \
@@ -111,6 +114,9 @@ function wiktionaryrender
         else if test "$type" = style
             set style $templates[(i++)]
             set str (string replace -r -a $pattern "$style\$1$reset_style" $str | string collect)
+        else if test "$type" = strip
+            set pattern "$pattern ?"
+            set str (string replace -ra $pattern "" $str | string collect)
         else
             set fn $templates[(i++)]
             set style $templates[(i++)]
