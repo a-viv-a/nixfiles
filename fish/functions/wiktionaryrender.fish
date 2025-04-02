@@ -10,8 +10,8 @@ function wiktionaryrender
         dynfn "lb|lbl|label" label (set_color -id) \
         style "ng|non-gloss" (set_color -i) \
         dynfn ux ux (set_color -i cyan) \
-        dynfn "quote-book|quote-journal|quote-text" quote ""
-
+        dynfn "quote-book|quote-journal|quote-text" quote "" \
+        dynfn "plural of" plural_of (set_color -i)
     set -x reset_style (set_color normal)
 
     function parens
@@ -41,8 +41,9 @@ function wiktionaryrender
         if test "$code" != en
             set_color red
             echo $argv
+            return
         end
-        echo -e (boldword $argv[2..])
+        echo -e (boldword $argv[2])
     end
 
     function first
@@ -61,6 +62,10 @@ function wiktionaryrender
         end
         set_color -d white
         echo -e "$(string join ", " $k_year $k_author $k_journal $k_title):$reset_style $(boldword (first "$k_text" "$k_passage"))"
+    end
+
+    function plural_of -a lang entry
+        echo "plural of $entry"
     end
 
     set --global i 1
