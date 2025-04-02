@@ -44,6 +44,7 @@ in
     halloy
     inkscape
     watchexec
+    xournalpp
 
     # https://discourse.nixos.org/t/google-chrome-not-working-after-recent-nixos-rebuild/43746/8
     (google-chrome.override {
