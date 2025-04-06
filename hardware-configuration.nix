@@ -18,7 +18,7 @@
     {
       device = "none";
       fsType = "tmpfs";
-      options = [ "defaults" "size=25%" "mode=755" ];
+      options = [ "defaults" "size=50%" "mode=755" ];
     };
 
   fileSystems."/boot" =
