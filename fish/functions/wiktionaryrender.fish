@@ -8,7 +8,6 @@ function wiktionaryrender
     set templates \
         liter "{{...}}" " ... " \
         liter "{{nb...}}" " ..." \
-        # should we merge strips?
         strip senseno \
         strip senseid \
         style "a|accent" (set_color red) \
@@ -19,7 +18,8 @@ function wiktionaryrender
         dynfn "quote-book|quote-journal|quote-text|quote-web" quote "" \
         dynfn "plural of" plural_of (set_color -i) \
         dynfun cap cap "" \
-        dynfn w wikilink (set_color blue)
+        dynfn w wikilink (set_color blue) \
+        dynfn "l|link" link ""
 
     function parens
         echo "($argv[1])"
@@ -95,6 +95,18 @@ function wiktionaryrender
             set display "$page"
         end
         hyperlink "https://en.wikipedia.com/wiki/$(string escape --style=url "$page")" "$display"
+    end
+
+    # insufficient parsing!
+    function link -a lang name alt gloss
+        if test -z "$alt"
+            echo $alt
+        else
+            echo $name
+        end
+        if test -z "$gloss"
+            echo $gloss
+        end
     end
 
     set --global i 1
