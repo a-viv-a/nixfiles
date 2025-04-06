@@ -175,11 +175,6 @@ in
     };
   };
 
-  programs.nix-index = {
-    enable = true;
-    enableFishIntegration = true;
-  };
-
   home.file.".icons/default".source = "${cursor.pkg}/share/icons/${cursor.name}";
   gtk.cursorTheme = {
     size = cursor.size;

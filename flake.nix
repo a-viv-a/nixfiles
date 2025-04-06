@@ -12,6 +12,9 @@
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
 
+    nix-index-database.url = "github:nix-community/nix-index-database";
+    nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
+
     rustbin-flake.url = "path:rustbin";
 
     secrets-nix = {
@@ -25,6 +28,7 @@
       nixpkgs,
       impermanence,
       home-manager,
+      nix-index-database,
       sops-nix,
       rustbin-flake,
       ...
@@ -53,6 +57,10 @@
               ./dict.nix
               # ./sync.nix
               ./laptop.nix
+
+              nix-index-database.nixosModules.nix-index
+              { programs.nix-index-database.comma.enable = true; }
+
               home-manager.nixosModules.home-manager
               {
                 home-manager.extraSpecialArgs = { inherit rustbin; };
