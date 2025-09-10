@@ -48,6 +48,8 @@
         "raw_music"
         "screenshots"
         "repos"
+        # android needs to write partitions for emulators here!
+        ".android"
         # TODO: use nix magic to keep this lined up with syncthing folders
         "garden"
         # google is a mess otherwise
