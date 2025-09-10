@@ -1,9 +1,9 @@
 { pkgs, lib, ... }:
 {
-  programs.river.enable = true;
+  programs.river-classic.enable = true;
   nixpkgs.overlays = [
     (final: prev: {
-      river = prev.river.overrideAttrs (old: {
+      river-classic = prev.river-classic.overrideAttrs (old: {
         patches = (old.patches or [ ]) ++ [
           (prev.fetchpatch {
             url = "https://codeberg.org/river/river/pulls/1185.diff";
@@ -14,7 +14,7 @@
       });
     })
   ];
-  programs.river.extraPackages = with pkgs; [
+  programs.river-classic.extraPackages = with pkgs; [
     way-displays
     wl-clipboard
     grim
