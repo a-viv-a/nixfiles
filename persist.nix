@@ -11,6 +11,7 @@
       # virtual machine drives
       "/var/lib/libvirt/images"
       "/var/lib/libvirt/qemu"
+      # want these to persist...
       "/var/lib/bluetooth"
       "/var/lib/tailscale"
     ];
@@ -30,6 +31,7 @@
         ".config/sops/"
         # the key to the keys
         ".ssh"
+        ".local/share/docker"
         # ".local/share/kscreen"
         # ".local/share/kwalletd"
         # ".local/share/sddm"
@@ -40,6 +42,8 @@
         ".local/share/fish/"
         # sioyek db, history of documents
         ".local/share/sioyek"
+        # steam games!
+        ".local/share/steam"
         # its a tossup but i like my cache sticking around!
         ".cache/"
         "downloads"
