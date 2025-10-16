@@ -175,6 +175,17 @@ in
     };
   };
 
+  xdg = {
+    mime.enable = true;
+    mimeApps = {
+      enable = true;
+      defaultApplications = {
+        "x-scheme-handler/discord" = ["vesktop.desktop"];
+        "application/pdf" = ["sioyek.desktop"];
+      };
+    };
+  };
+
   home.file.".icons/default".source = "${cursor.pkg}/share/icons/${cursor.name}";
   gtk.cursorTheme = {
     size = cursor.size;
