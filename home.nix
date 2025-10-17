@@ -180,8 +180,8 @@ in
     mimeApps = {
       enable = true;
       defaultApplications = {
-        "x-scheme-handler/discord" = ["vesktop.desktop"];
-        "application/pdf" = ["sioyek.desktop"];
+        "x-scheme-handler/discord" = [ "vesktop.desktop" ];
+        "application/pdf" = [ "sioyek.desktop" ];
       };
     };
   };

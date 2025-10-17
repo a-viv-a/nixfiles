@@ -236,13 +236,16 @@ function compute_sleep_time
     math "$min_period - ($current_seconds % $min_period)"
 end
 
+function dyncall -a f
+    $f
+end
+
 function update -a name
     set period {$name}_period
     if test $$period -ne -1 -a (math "$sec % $$period") -eq 0
-        {$name}_fn
+        dyncall {$name}_fn
     end
 end
-
 
 function tick
     echo "tick $sec"
@@ -261,7 +264,7 @@ function refresh
             set {$refresh}_out $value
         else
             echo "refreshing $refresh; running fn"
-            {$refresh}_fn
+            dyncall {$refresh}_fn
         end
         rm $needs_refresh_dir/$refresh
     end
@@ -270,7 +273,7 @@ end
 # set inital values
 begin
     for name in $names
-        {$name}_fn
+        dyncall {$name}_fn
     end
     refresh
     write_display
