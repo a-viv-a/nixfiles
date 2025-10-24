@@ -173,7 +173,13 @@ in
         should_launch_new_window = "1";
       };
     };
+
+    claude-code = {
+      enable = true;
+    };
   };
+
+  home.file.".claude/CLAUDE.md".source = ./claude-files/CLAUDE.md;
 
   xdg = {
     mime.enable = true;
