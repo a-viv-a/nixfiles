@@ -11,6 +11,17 @@ This is a NixOS configuration repository using flakes for a laptop named "blade"
 - River (Wayland compositor) window manager
 - Custom fish shell configuration with functions and completions
 
+## Development Workflow
+
+**IMPORTANT**: After making any changes to Nix configuration files, ALWAYS verify the build:
+
+```bash
+# Validate flake (checks syntax and evaluates outputs)
+nix flake check
+```
+
+This catches syntax errors and evaluation issues before the user attempts to rebuild.
+
 ## Architecture
 
 ### Flake Structure (`flake.nix`)
