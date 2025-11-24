@@ -128,28 +128,16 @@ end
 # ---- power section ----
 set battery_path /sys/class/power_supply/BAT0
 
-# computed with n+1
-set max_samples 9
-set current_samples (bat $battery_path/current_now)
+# exponential moving average for current draw
+# alpha controls smoothing: higher = more responsive, lower = more stable
+set ema_alpha 0.4
+set current_ema (bat $battery_path/current_now)
 
-function list_sum
-    set total 0
-    for val in $argv
-        set total (math "$total + $val")
-    end
-    echo $total
-end
-
-# sample the cumulative average of the current
+# update exponential moving average of current
 function average_current
-    set --append current_samples (bat $battery_path/current_now)
-    set average (math "$(list_sum $current_samples) / $(count $current_samples)")
-
-    while test (count $current_samples) -gt $max_samples
-        set --erase current_samples[1]
-    end
-
-    echo $average
+    set current_sample (bat $battery_path/current_now)
+    set current_ema (math "$ema_alpha * $current_sample + (1 - $ema_alpha) * $current_ema")
+    echo $current_ema
 end
 
 # math, rounded and padded to 1 sig fig to reduce shift
