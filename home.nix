@@ -59,11 +59,6 @@ in
     # https://github.com/Vencord/Vesktop/issues/516
     (vesktop.override { withSystemVencord = false; })
     spotify
-
-    # custom fd + tree combo
-    (writeShellScriptBin "gtree" ''
-      ${fd}/bin/fd --type f --hidden --exclude .git | ${tree}/bin/tree --fromfile
-    '')
   ];
 
   programs = {
