@@ -44,7 +44,8 @@
         # sioyek db, history of documents
         ".local/share/sioyek"
         # steam games!
-        ".local/share/steam"
+        ".steam"
+        ".local/share/Steam"
         # its a tossup but i like my cache sticking around!
         ".cache/"
         "downloads"
