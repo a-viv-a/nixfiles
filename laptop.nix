@@ -1,15 +1,21 @@
-{ pkgs, lib, config, ... }: {
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
+{
   services.auto-cpufreq.enable = true;
   services.auto-cpufreq.settings = {
     battery = {
-       governor = "powersave";
-       energy_performance_preference = "power";
-       turbo = "never";
+      governor = "powersave";
+      energy_performance_preference = "power";
+      turbo = "never";
     };
     charger = {
-       governor = "performance";
-       energy_performance_preference = "performance";
-       turbo = "auto";
+      governor = "performance";
+      energy_performance_preference = "performance";
+      turbo = "auto";
     };
   };
 
@@ -18,7 +24,7 @@
   services.blueman.enable = true;
 
   # nvidia drivers
-  services.xserver.videoDrivers = ["nvidia"];
+  services.xserver.videoDrivers = [ "nvidia" ];
 
   hardware.graphics.enable = true;
 
@@ -41,7 +47,11 @@
   };
 
   # razer blade lid hibernate bug fix
-  boot.kernelParams = [ "button.lid_init_state=open" ];
+  boot.kernelParams = [
+    "button.lid_init_state=open"
+    # samsung t7 ssd: disable UAS (USB Attached SCSI) to prevent stability issues
+    "usb-storage.quirks=04e8:4001:u"
+  ];
 
   # allow brightness to be changed without root (both amd and nvidia)
   services.udev.extraRules = ''
