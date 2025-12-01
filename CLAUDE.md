@@ -168,6 +168,9 @@ Complex generator-based status system written in Fish that updates sandbar via F
 **Async Refresh Pattern:**
 Fish functions can write to `$needs_refresh_dir/{name}` to trigger widget updates outside normal periods. Used for expensive computations and external events.
 
+**IMPORTANT - Testing System Paths:**
+Before using any system paths (sysfs, hwmon, etc.) in widgets, ALWAYS test their existence first with bash commands. Don't assume file structure based on typical Linux systems - verify what actually exists on this specific machine.
+
 ### Bar Display (`river/bar`)
 
 Spawns sandbar process that reads from FIFO and renders the status bar.

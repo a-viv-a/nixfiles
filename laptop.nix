@@ -45,6 +45,7 @@
 
   # allow brightness to be changed without root (both amd and nvidia)
   services.udev.extraRules = ''
+    ACTION=="add", SUBSYSTEM=="backlight", KERNEL=="amdgpu_bl1", MODE="0666", RUN+="${pkgs.coreutils}/bin/chmod a+w /sys/class/backlight/%k/brightness"
     ACTION=="add", SUBSYSTEM=="backlight", KERNEL=="amdgpu_bl2", MODE="0666", RUN+="${pkgs.coreutils}/bin/chmod a+w /sys/class/backlight/%k/brightness"
     ACTION=="add", SUBSYSTEM=="backlight", KERNEL=="nvidia_0", MODE="0666", RUN+="${pkgs.coreutils}/bin/chmod a+w /sys/class/backlight/%k/brightness"
   '';
