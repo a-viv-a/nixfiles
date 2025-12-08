@@ -52,5 +52,5 @@ function gtree --description "Git-aware tree view using fd and tree"
         set depth_flags --max-depth $_flag_level
     end
 
-    fd $type_flag $fd_flags $depth_flags . $path | tree --fromfile
+    fd $type_flag $fd_flags $depth_flags --base-directory $path | tree --fromfile
 end
