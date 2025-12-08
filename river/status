@@ -13,7 +13,7 @@ set names wifi audio player cpu memory brightness power datetime weather gpu
 
 # this sends the status text over the fifo pipe, and is called at the bottom of the file
 function write_display
-    echo "all status $player_out $weather_out $gpu_out $audio_out $wifi_out $brightness_out $memory_out $cpu_out $power_out $datetime_out" >$FIFO
+    echo "all status $player_out $weather_out$gpu_out $audio_out $wifi_out $brightness_out $memory_out $cpu_out $power_out $datetime_out" >$FIFO
 end
 
 # ---- utils ----
@@ -183,7 +183,7 @@ function gpu_fn
     if test -f $nvidia_pci_path
         set gpu_status (cat $nvidia_pci_path)
         if test "$gpu_status" = "active"
-            set gpu_out "^fg(#fabd2f)[GPU]"
+            set gpu_out " ^fg(#fabd2f)[GPU]"
         else
             set gpu_out ""
         end
