@@ -45,6 +45,7 @@ in
     inkscape
     watchexec
     xournalpp
+    digikam
 
     # https://discourse.nixos.org/t/google-chrome-not-working-after-recent-nixos-rebuild/43746/8
     (google-chrome.override {

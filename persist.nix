@@ -32,6 +32,7 @@
         # the key to the keys
         ".ssh"
         ".local/share/docker"
+        ".local/share/digikam"
         # ".local/share/kscreen"
         # ".local/share/kwalletd"
         # ".local/share/sddm"
