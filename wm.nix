@@ -35,6 +35,8 @@
   ];
   environment.etc."way-displays/cfg.yaml".source = ./way-displays/cfg.yaml;
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
+  # Force River to use AMD iGPU (card1) instead of NVIDIA dGPU (card2)
+  environment.sessionVariables.WLR_DRM_DEVICES = "/dev/dri/card1";
   environment.variables.XDG_CURRENT_DESKTOP = "river";
   # bind caps -> escape key for internal keyboard
   # my external keyboard doesn't use caps lock (shift keys in a mode)
