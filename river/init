@@ -279,7 +279,7 @@ set trackpad "pointer-1739-52643-1A582014:00_06CB:CDA3_Touchpad"
 riverctl input $trackpad tap enabled
 riverctl input $trackpad natural-scroll enabled
 riverctl input $trackpad accel-profile adaptive
-riverctl input $trackpad scroll-factor ".25"
+riverctl input $trackpad scroll-factor "1"
 riverctl input $trackpad disable-while-typing enabled
 
 # Make all views with an app-id that starts with "float" and title "foo" start floating.
