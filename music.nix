@@ -3,16 +3,7 @@
   home.packages = with pkgs; [
     strawberry
     chromaprint
-    (beets.override {
-      pluginOverrides = {
-        chroma.enable = true;
-        fetchart.enable = true;
-        embedart.enable = true;
-        replaygain.enable = true;
-        lastgenre.enable = true;
-        ftintitle.enable = true;
-      };
-    })
+    beets
     (ffmpeg.override {
       # we want libfdk-aac for good aac encoding
       withFdkAac = true;
