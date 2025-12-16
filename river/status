@@ -203,7 +203,7 @@ function hog_fn
         set parts (string split ' ' $top_proc)
         set proc_name $parts[1]
         set score $parts[2]
-        if test (math "$score >= $hog_threshold") -eq 1
+        if test (math "floor($score)") -ge $hog_threshold
             set hog_out "^fg($fish_color_operator)[$(string shorten --max 12 $proc_name) $score%]"
         end
     end
@@ -232,10 +232,7 @@ end
 set needs_refresh_dir "$XDG_RUNTIME_DIR/status_needs_refresh"
 
 # clean out any previous refresh requests
-if test -e $needs_refresh_dir
-    rm $needs_refresh_dir/*
-    rmdir $needs_refresh_dir
-end
+rm -r $needs_refresh_dir 2>/dev/null
 mkdir $needs_refresh_dir
 
 set min_period 60
