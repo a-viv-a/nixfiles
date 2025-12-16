@@ -46,11 +46,11 @@ set audio_out ""
 set audio_period -1
 function audio_fn
     set default_sink (wpctl get-volume @DEFAULT_AUDIO_SINK@)
-    set volume (echo $default_sink | rg -o ': ((?:\\d|\\.)+)' -r '$1')
+    set volume (string match -r ': ([\d.]+)' $default_sink)[2]
     set volume (math "$volume * 100")
     set icon 
     set color "$fish_color_command"
-    if echo $default_sink | rg MUTED >/dev/null
+    if string match -q '*MUTED*' $default_sink
         set icon 
         set color "$fish_color_error"
     end
@@ -68,7 +68,6 @@ function player_watcher
         refresh_status player "^fg($fish_color_comment)$(string shorten --max 60 "$value")"
     end
 end
-subprocess_call player_watcher
 
 set weather_out ""
 set happy_weather_period 1800 # 30 minutes
@@ -104,7 +103,7 @@ end
 set cpu_out ""
 set cpu_period 15
 function cpu_fn
-    set -l cpu (grep -o "^[^ ]*" /proc/loadavg)
+    set -l cpu (string split ' ' < /proc/loadavg)[1]
     set -l graph (tracked_statistic_graph --key=cpu --min_height=8 --width=5 $cpu)
     set cpu_out "^fg($fish_color_command)  $cpu $graph"
 end
@@ -114,8 +113,7 @@ set memory_period 15
 function memory_fn
     set -l mem_kb (free | awk 'NR==2 {print $3}')
     set -l memory (numfmt --to=iec --from-unit=1024 $mem_kb)
-    set -l mem_bytes (math "$mem_kb * 1024")
-    set -l graph (tracked_statistic_graph -kmemory -h1.6e+7 -w5 $mem_bytes)
+    set -l graph (tracked_statistic_graph -kmemory -h1.6e+7 -w5 $mem_kb)
     set memory_out "^fg($fish_color_quote)  $memory $graph"
 end
 
@@ -212,9 +210,27 @@ end
 
 # ---- end generators ----
 
+# ---- debug mode ----
+if contains -- --debug $argv
+    set FIFO /dev/stdout
+    for name in $names
+        echo "--- $name ---"
+        "$name"_fn
+        echo {$name}_out: $$name"_out"
+        echo
+    end
+    echo "--- full status line ---"
+    write_display
+    exit 0
+end
+# ---- end debug mode ----
+
 set status_pid_dir "$XDG_RUNTIME_DIR/status_pid"
 
 # ---- startup work ----
+
+# start player watcher (must be after debug check to avoid hanging)
+subprocess_call player_watcher
 
 # remove the old status if it is still running
 if test -e $status_pid_dir
