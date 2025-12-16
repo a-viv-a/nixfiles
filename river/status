@@ -112,9 +112,10 @@ end
 set memory_out ""
 set memory_period 15
 function memory_fn
-    set -l memory (free -h | sed -n "2s/\([^ ]* *\)\{2\}\([^ ]*\).*/\2/p")
-    set -l memory_bytes (free | sed -n "2s/\([^ ]* *\)\{2\}\([^ ]*\).*/\2/p")
-    set -l graph (tracked_statistic_graph -kmemory -h1.6e+7 -w5 $memory_bytes)
+    set -l mem_kb (free | awk 'NR==2 {print $3}')
+    set -l memory (numfmt --to=iec --from-unit=1024 $mem_kb)
+    set -l mem_bytes (math "$mem_kb * 1024")
+    set -l graph (tracked_statistic_graph -kmemory -h1.6e+7 -w5 $mem_bytes)
     set memory_out "^fg($fish_color_quote)  $memory $graph"
 end
 
