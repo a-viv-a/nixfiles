@@ -30,14 +30,15 @@ end
 # the computation is run inside a subprocess that writes its result to the refresh dir
 
 set wifi_out ""
-set wifi_period 120
+set wifi_period 60
 function wifi_fn
-    # this is an expensive piece of work...
-    function compute_wifi
-        set wifi_value (nmcli -f IN-USE,SSID,RATE,SIGNAL dev wifi | awk '/\*/ {$1=""; print $0 }' | string trim)
-        refresh_status wifi "^fg($fish_color_redirection)[$wifi_value%]"
+    set signal (awk 'NR==3 {gsub(/\./, "", $4); print $4}' /proc/net/wireless)
+    if test -n "$signal"
+        set ssid (nmcli -t -g NAME connection show --active | head -1)
+        set wifi_out "^fg($fish_color_redirection)[$ssid $signal dBm]"
+    else
+        set wifi_out ""
     end
-    subprocess_call compute_wifi
 end
 
 set audio_out ""
