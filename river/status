@@ -212,11 +212,12 @@ end
 
 # ---- debug mode ----
 if contains -- --debug $argv
-    set FIFO /dev/stdout
+    set FIFO /dev/fd/1
     for name in $names
         echo "--- $name ---"
         "$name"_fn
-        echo {$name}_out: $$name"_out"
+        set -l varname {$name}_out
+        echo "$varname:" $$varname
         echo
     end
     echo "--- full status line ---"
