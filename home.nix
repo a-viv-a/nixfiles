@@ -42,10 +42,20 @@ in
     sops
     nodejs
     halloy
+    (python3.withPackages (
+      python-packages: with python-packages; [
+        ipython
+        requests
+        numpy
+        pandas
+      ]
+    ))
+
     inkscape
     watchexec
     xournalpp
     digikam
+    gpu-screen-recorder
 
     # https://discourse.nixos.org/t/google-chrome-not-working-after-recent-nixos-rebuild/43746/8
     (google-chrome.override {
