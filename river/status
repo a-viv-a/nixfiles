@@ -132,11 +132,11 @@ set battery_path /sys/class/power_supply/BAT0
 # exponential moving average for current draw
 # alpha controls smoothing: higher = more responsive, lower = more stable
 set ema_alpha 0.4
-set current_ema (bat $battery_path/current_now)
+set current_ema (cat $battery_path/current_now)
 
 # update exponential moving average of current
 function average_current
-    set current_sample (bat $battery_path/current_now)
+    set current_sample (cat $battery_path/current_now)
     set current_ema (math "$ema_alpha * $current_sample + (1 - $ema_alpha) * $current_ema")
     echo $current_ema
 end
@@ -157,7 +157,7 @@ function power_fn
     if test "$power_status" = Discharging
         set discharge_watts (padmath \
             "$(cat $battery_path/current_now) * $(cat $battery_path/voltage_now) * 1e-12")
-        set time_remaining (date -u -d @(math "($(bat $battery_path/charge_now) / $(average_current)) * 60 * 60") +"%-H:%M")
+        set time_remaining (date -u -d @(math "($(cat $battery_path/charge_now) / $(average_current)) * 60 * 60") +"%-H:%M")
         set watts_graph (tracked_statistic_graph --key=watts --min_height=25 --width=5 (math "max(0, $discharge_watts - 4)"))
         # padding to 18 prevents layout shift when watts goes above then below 10
         # USUALLY an estimate of 10 hours or greater is paired with a wattage below 10
