@@ -36,7 +36,7 @@
         # ".local/share/kscreen"
         # ".local/share/kwalletd"
         # ".local/share/sddm"
-        ".claude"
+        ".local/state/claude"
         ".local/share/zoxide"
         ".local/share/direnv/allow"
         # fish history, just persisting the history file causes issues
@@ -70,8 +70,6 @@
       files = [
         # pem cert for eduroam
         ".config/cat_installer/ca.pem"
-        ".claude.json"
-        ".claude.json.backup"
       ];
     };
   };

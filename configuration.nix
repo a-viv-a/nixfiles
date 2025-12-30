@@ -107,6 +107,7 @@ in
 
   environment.variables = {
     EDITOR = lib.getExe pkgs.helix;
+    CLAUDE_CONFIG_DIR = "$HOME/.local/state/claude";
   };
 
   # flash drives and such

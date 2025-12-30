@@ -190,7 +190,7 @@ in
     };
   };
 
-  home.file.".claude/CLAUDE.md".source = ./claude-files/CLAUDE.md;
+  home.file.".local/state/claude/CLAUDE.md".source = ./claude-files/CLAUDE.md;
 
   xdg = {
     mime.enable = true;
