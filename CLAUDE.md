@@ -187,6 +187,7 @@ Edit `river/bar` sandbar flags for colors/fonts/positioning.
 
 ## Important Notes
 
+- **WLR_DRM_DEVICES limitation**: Cannot use `/dev/dri/by-path/` symlinks because wlroots parses colons as device separators, breaking PCI paths like `pci-0000:04:00.0-card`. Must use `/dev/dri/cardN` paths instead, but card numbers shift when nvidia modules are blacklisted.
 - Users have immutable passwords (managed via sops, `users.mutableUsers = false`)
 - The `.claude` directory is persisted in impermanence config
 - Fish shell functions/completions are in `./fish/functions/` and `./fish/completions/`

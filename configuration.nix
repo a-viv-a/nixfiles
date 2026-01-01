@@ -82,7 +82,7 @@ in
       extraGroups = [
         "wheel"
         "libvirtd"
-        "dialout" # allow serial!
+        "dialout"
       ];
       isNormalUser = true;
       shell = pkgs.fish;

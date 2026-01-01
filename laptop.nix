@@ -5,6 +5,15 @@
   ...
 }:
 {
+  specialisation.igpu-only.configuration = {
+    services.xserver.videoDrivers = lib.mkForce [ "amdgpu" ];
+    hardware.nvidia.prime.offload.enable = lib.mkForce false;
+    hardware.nvidia.prime.offload.enableOffloadCmd = lib.mkForce false;
+    boot.blacklistedKernelModules = [ "nvidia" "nvidia_drm" "nvidia_modeset" "nvidia_uvm" ];
+    # nvidia card still shows up as card1 even when blacklisted, AMD is card2
+    # (can't use by-path symlinks - wlroots parses colons as device separators)
+    environment.sessionVariables.WLR_DRM_DEVICES = lib.mkForce "/dev/dri/card2";
+  };
   services.auto-cpufreq.enable = true;
   services.auto-cpufreq.settings = {
     battery = {
